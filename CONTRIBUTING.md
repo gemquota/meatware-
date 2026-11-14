@@ -27,9 +27,11 @@ You can contribute from a phone. No terminal, Git installation, or local reposit
 1. Clone the repository.
 2. Read the task specification and machine-readable agent manifest.
 3. Work in a branch and keep changes scoped to one task.
-4. Run available validation and inspect the diff.
+4. Run `python scripts/validate_project.py` and inspect the diff.
 5. Open a pull request with Task-ID: PHASE1-XXX in its title or body.
 6. Include model/tool versions and material human review in the PR description when relevant.
+
+The validator checks JSON contracts, manifest paths, task identifiers, credits structure, and local Markdown links. GitHub Actions runs it on pushes and pull requests. See [Repository Validation](VALIDATION.md).
 
 ## What makes a good contribution?
 - It solves the requested task, rather than expanding the scope.
@@ -71,6 +73,7 @@ See also the [governance model](GOVERNANCE.md) and [maintainer review procedure]
 - [ ] Continuity conflicts flagged.
 - [ ] No copied protected dialogue or lyrics.
 - [ ] Attribution and tool provenance included where applicable.
+- [ ] `python scripts/validate_project.py` passes.
 - [ ] Diff is focused and readable.
 
 Use the task's GitHub issue for task-specific questions. If you are unsure where to begin, choose a Tier 1 task with a small, concrete output rather than proposing a new subsystem.
