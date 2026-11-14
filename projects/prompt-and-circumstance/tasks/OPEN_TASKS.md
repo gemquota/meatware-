@@ -24,6 +24,10 @@ This is the human-readable task index. GitHub issues are the live claim/status s
 - **CONTRIB-007:** Create a sound-design cue sheet for the Faraday deposition. ([Issue #13](https://github.com/gemquota/meatware-/issues/13))
 - **CONTRIB-008:** Proofread the franchise bible and report only factual contradictions or unclear wording. ([Issue #14](https://github.com/gemquota/meatware-/issues/14))
 
+## Launch and governance gates
+- [First Ten Contributors pilot](https://github.com/gemquota/meatware-/issues/17): public recruitment and feedback-only starter tasks.
+- [Rights and licensing decision](https://github.com/gemquota/meatware-/issues/16): unresolved gate before substantial scripts, artwork, music, performances or production assets are solicited.
+
 ## Claiming and submitting
 1. Check the corresponding GitHub issue.
 2. Comment Claiming TASK-ID.
