@@ -195,8 +195,13 @@ def validate_submission(path: Path, registry: dict) -> list[str]:
     except (AttributeError, ValueError):
         errors.append("submitted_at must be an ISO-8601 date-time")
     artifact = payload.get("artifact")
-    if not isinstance(artifact, dict) or artifact.get("type") not in {"issue_comment", "pull_request", "repository_path", "external_link"} or not isinstance(artifact.get("reference"), str) or not artifact["reference"].strip():
-        errors.append("artifact must contain a supported type and non-empty reference")
+    if not isinstance(artifact, dict):
+        errors.append("artifact must be an object")
+    else:
+        if set(artifact) - {"type", "reference", "path"}:
+            errors.append("artifact contains unknown fields")
+        if artifact.get("type") not in {"issue_comment", "pull_request", "repository_path", "external_link"} or not isinstance(artifact.get("reference"), str) or not artifact["reference"].strip():
+            errors.append("artifact must contain a supported type and non-empty reference")
     if not isinstance(payload.get("summary"), str) or not payload["summary"].strip() or len(payload["summary"]) > 2000:
         errors.append("summary must be 1-2000 characters")
     for field in ("assumptions", "canon_conflicts"):
