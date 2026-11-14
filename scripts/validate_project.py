@@ -116,6 +116,52 @@ def validate_json_contracts(errors: list[str]) -> None:
             fail(errors, "CREDITS.json: policy path is required")
 
 
+def validate_task_registry(errors: list[str]) -> None:
+    registry_path = ROOT / "projects/prompt-and-circumstance/tasks/registry.json"
+    task_schema_path = ROOT / "projects/prompt-and-circumstance/tasks/task-registry.schema.json"
+    submission_schema_path = ROOT / "projects/prompt-and-circumstance/tasks/submission.schema.json"
+    registry = read_json(registry_path, errors)
+    read_json(task_schema_path, errors)
+    read_json(submission_schema_path, errors)
+    if not isinstance(registry, dict):
+        return
+    tasks = registry.get("tasks")
+    if not isinstance(tasks, list) or not tasks:
+        fail(errors, "task registry: tasks must be a non-empty array")
+        return
+    ids = set()
+    by_id = {}
+    for task in tasks:
+        if not isinstance(task, dict):
+            fail(errors, "task registry: every task must be an object")
+            continue
+        task_id = task.get("id")
+        if not isinstance(task_id, str) or not re.fullmatch(r"[A-Z0-9]+-[0-9]{3}", task_id):
+            fail(errors, f"task registry: invalid task ID {task_id!r}")
+            continue
+        if task_id in ids:
+            fail(errors, f"task registry: duplicate task ID {task_id}")
+        ids.add(task_id)
+        by_id[task_id] = task
+        if task.get("availability") == "open" and task.get("rights_scope") == "gated_creative_work":
+            fail(errors, f"task registry: gated task {task_id} cannot be open")
+        if task.get("human_review_required") is not True:
+            fail(errors, f"task registry: {task_id} must require human review")
+        issue_url = task.get("issue_url", "")
+        if not isinstance(issue_url, str) or not issue_url.startswith("https://github.com/gemquota/meatware-/issues/"):
+            fail(errors, f"task registry: invalid issue URL for {task_id}")
+        for field in ("spec_path", "output_path"):
+            value = task.get(field)
+            if value is not None:
+                check_repo_path(value, f"task registry {task_id}.{field}", errors)
+        for value in task.get("source_paths", []):
+            check_repo_path(value, f"task registry {task_id}.source_paths", errors)
+    for task_id, task in by_id.items():
+        for dependency in task.get("depends_on", []):
+            if dependency not in by_id:
+                fail(errors, f"task registry: {task_id} depends on unknown task {dependency}")
+
+
 def validate_markdown_links(errors: list[str]) -> int:
     checked = 0
     for markdown in sorted(ROOT.rglob("*.md")):
@@ -152,6 +198,7 @@ def validate_markdown_links(errors: list[str]) -> int:
 def main() -> int:
     errors: list[str] = []
     validate_json_contracts(errors)
+    validate_task_registry(errors)
     links_checked = validate_markdown_links(errors)
     if errors:
         print(f"Validation failed with {len(errors)} error(s):")
@@ -159,7 +206,7 @@ def main() -> int:
             print(f" - {error}")
         return 1
     print("Repository validation passed.")
-    print(f" - Canon, agent manifest, and credits JSON: valid")
+    print(f" - Canon, agent manifest, credits, task registry, and schemas: valid")
     print(f" - Local Markdown links checked: {links_checked}")
     return 0
 
