@@ -60,7 +60,7 @@ Recruitment tasks should have a 10–30 minute version. Examples:
 - Improve one character's voice sample.
 - Identify an unclear visual action.
 - Score a 60-second scene test.
-- Suggest a prop, sound cue, or location detail.
+- Flag an unclear prop, sound beat, or location detail as a non-exclusive suggestion.
 - Proofread one page and report only factual ambiguity.
 
 Each starter task must include:
@@ -83,7 +83,7 @@ Look for communities that already discuss screenwriting, comedy writing, indie f
 Invite prompt designers, agent builders, and people experimenting with generative video to evaluate a defined workflow or produce one bounded test. Be explicit that the project needs human review and editorial judgement, not bulk AI text.
 
 ### C. Indie film and student networks
-Offer practical micro-roles: continuity review, shot lists, sound design, animatic tests, production feasibility, and editing feedback. Do not imply paid work or guaranteed credits beyond the stated attribution policy.
+Offer practical micro-roles: continuity review, scene-staging feedback, sound/comedy critique, production feasibility, and editing feedback. Do not imply paid work or guaranteed credits beyond the stated attribution policy.
 
 ### D. Open-source and GitHub communities
 Recruit technical contributors for task discovery, validation scripts, agent workflows, repository automation, and production test harnesses. Keep software tasks separate from creative approval.
@@ -122,8 +122,8 @@ Offer a short list of small tasks:
 5. Chad voice guide.
 6. Three alternate jokes for a named beat.
 7. Prop/device continuity checklist.
-8. Boardroom cold-open shot list.
-9. Faraday deposition sound cue sheet.
+8. Boardroom cold-open visual clarity review.
+9. Faraday deposition sound/comedy clarity review.
 10. Modality benchmark critique.
 
 A contributor can complete one item. Do not require registration beyond the platform account needed to submit.
