@@ -4,9 +4,13 @@
 - **Phase:** Phase 1 — Core Story Solidification
 - **Target output:** films/01_prompt_and_circumstance/beat_sheet.md
 - **Credit weight:** 1.0× Tier 1 web-paste contribution; 3.0× Tier 2 automated PR contribution, subject to review.
-- **Status:** Ready-to-run task specification; beat sheet not yet generated.
+- **Status:** Draft generated at the target path; awaiting editorial review.
 
 ---
+
+## Current draft
+
+The first 40-beat draft is available at [films/01_prompt_and_circumstance/beat_sheet.md](../films/01_prompt_and_circumstance/beat_sheet.md). It satisfies the structural checklist but carries explicit editorial questions. Review and critique are welcome; do not treat it as approved canon.
 
 ## Tier 1 — Casual web UI
 
