@@ -1,0 +1,54 @@
+name: Submit a contribution
+description: Submit a draft, review, continuity finding, or production idea
+title: "[Contribution] "
+body:
+  - type: input
+    id: task
+    attributes:
+      label: Task ID
+      description: Use the task ID if this responds to an existing task.
+      placeholder: PHASE1-XXX or CONTRIB-XXX
+    validations:
+      required: false
+  - type: dropdown
+    id: type
+    attributes:
+      label: Contribution type
+      options:
+        - Story / outline
+        - Character / dialogue
+        - Continuity review
+        - Production / visual / audio
+        - Tooling / automation
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Paste your draft or describe the proposed change.
+    validations:
+      required: true
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Assumptions and canon conflicts
+      description: Identify anything you invented or could not reconcile.
+    validations:
+      required: false
+  - type: input
+    id: attribution
+    attributes:
+      label: Preferred public attribution
+      description: GitHub handle is fine. Do not include private contact details.
+    validations:
+      required: false
+  - type: input
+    id: tools
+    attributes:
+      label: Tools used (optional)
+      placeholder: ChatGPT, local agent, editing software, etc.
+    validations:
+      required: false
