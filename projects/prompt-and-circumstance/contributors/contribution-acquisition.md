@@ -224,6 +224,7 @@ The repository currently has no published LICENSE or contributor agreement. Befo
 ## 14. Immediate next actions
 
 1. Verify the repository's contributor links from a clean browser session.
+2. Publish the first-ten call and channel-specific posts using the [outreach channel plan](outreach-channel-plan.md).
 2. Add three small issues for a voice guide, beat alternatives, and prop continuity.
 3. Personally invite a small pilot group to complete one 10–20 minute task.
 4. Review those submissions quickly and publish the outcomes.
