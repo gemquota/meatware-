@@ -20,8 +20,8 @@ This is the human-readable task index. GitHub issues are the live claim/status s
 - **CONTRIB-003:** Propose three alternate versions of one Film 1 beat without changing its function. ([Issue #9](https://github.com/gemquota/meatware-/issues/9))
 - **CONTRIB-004:** Create a prop and device continuity checklist for Film 1. ([Issue #10](https://github.com/gemquota/meatware-/issues/10))
 - **CONTRIB-005:** Review the modality benchmark and identify missing evaluation criteria. ([Issue #11](https://github.com/gemquota/meatware-/issues/11))
-- **CONTRIB-006:** Create a 60–90 second animatic shot list for the boardroom cold open. ([Issue #12](https://github.com/gemquota/meatware-/issues/12))
-- **CONTRIB-007:** Create a sound-design cue sheet for the Faraday deposition. ([Issue #13](https://github.com/gemquota/meatware-/issues/13))
+- **CONTRIB-006:** Review the boardroom cold open for visual clarity and staging risks; submit feedback only. ([Issue #12](https://github.com/gemquota/meatware-/issues/12))
+- **CONTRIB-007:** Review the Faraday deposition's sound/comedy beats; submit feedback only. ([Issue #13](https://github.com/gemquota/meatware-/issues/13))
 - **CONTRIB-008:** Proofread the franchise bible and report only factual contradictions or unclear wording. ([Issue #14](https://github.com/gemquota/meatware-/issues/14))
 
 ## Launch and governance gates
