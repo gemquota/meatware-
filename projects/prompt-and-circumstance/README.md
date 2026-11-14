@@ -17,10 +17,13 @@ The story begins as a workplace farce and escalates through conspiracy thriller,
 | Path | Purpose |
 |---|---|
 | canon/franchise-bible.md | Premise, invariants, characters, tone and canon boundaries |
+| canon/canon.json | Machine-readable franchise canon |
+| canon/continuity-register.md | Source contradictions and unresolved continuity |
 | films/film-arc.md | Six-film structure and detailed Film 1/2 treatments |
 | development/decisions.md | Creative evolution, alternatives, decisions and open questions |
 | canon/continuity-register.md | Source contradictions and unresolved continuity |
 | production/roadmap.md | Production modality, contributor model and project phases |
+| production/source-map.md | Provenance and mapping from PDF to Markdown |
 | meta_prompts/01-architecture-expander.md | Stateless prompt for generating missing operational modules |
 | tasks/PHASE1-001-film1-beat-sheet.md | Ready-to-run 40-beat Film 1 task |
 | production/source-map.md | Provenance and mapping from PDF to Markdown |
