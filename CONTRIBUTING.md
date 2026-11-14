@@ -63,7 +63,7 @@ Credit is awarded for accepted work, not prompt volume, token count, number of c
 - Disclose generated material and meaningful human edits.
 - Do not impersonate another contributor or claim work you did not perform.
 
-See also the [governance model](GOVERNANCE.md) and [maintainer review procedure](MAINTAINERS.md).
+See also the [governance model](GOVERNANCE.md), [maintainer review procedure](MAINTAINERS.md), and [agent operating contract](AGENTS.md). Technical contributors can discover bounded work with `python scripts/agent_tasks.py ready` and validate structured submissions with `python scripts/agent_tasks.py validate-submission path/to/submission.json`.
 
 ## Pull request checklist
 - [ ] Task ID included.
