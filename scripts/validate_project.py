@@ -63,7 +63,7 @@ def validate_json_contracts(errors: list[str]) -> None:
     if isinstance(manifest, dict):
         if manifest.get("repository") != "gemquota/meatware-":
             fail(errors, "agent manifest repository must be gemquota/meatware-")
-        for field in ("task_index",):
+        for field in ("task_index", "task_registry", "task_registry_schema", "submission_schema", "submission_example", "agent_entrypoint", "agent_cli"):
             value = manifest.get(field)
             if not isinstance(value, str):
                 fail(errors, f"agent manifest: {field} must be a path string")
