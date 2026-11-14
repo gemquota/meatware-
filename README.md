@@ -16,6 +16,10 @@ The source PDF remains the archival source. The maintained working documentation
 - [Contribution guide](CONTRIBUTING.md)
 - [Contribution acquisition plan](projects/prompt-and-circumstance/contributors/contribution-acquisition.md)
 - [Outreach kit](projects/prompt-and-circumstance/contributors/outreach-kit.md)
+- [Outreach channel plan](projects/prompt-and-circumstance/contributors/outreach-channel-plan.md)
+- [First Ten Contributors recruitment issue](https://github.com/gemquota/meatware-/issues/17)
+- [Governance](GOVERNANCE.md)
+- [Maintainer handbook](MAINTAINERS.md)
 - [Credits and attribution policy](projects/prompt-and-circumstance/contributors/credits-and-attribution.md)
 - [Machine-readable agent manifest](.well-known/agent-manifest.json)
 
