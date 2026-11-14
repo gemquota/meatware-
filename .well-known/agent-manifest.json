@@ -22,84 +22,91 @@
       "id": "PHASE1-001",
       "title": "Film 1 40-beat structural sheet",
       "path": "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md",
-      "status": "draft_completed_editorial_review",
+      "status": "open_for_editorial_review",
       "tier": [
         "1",
         "2"
       ],
       "output": "40 numbered beats",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/15"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/15",
+      "rights_scope": "feedback_only"
     },
     {
       "id": "PHASE1-002",
       "title": "Film 2 structural outline",
       "path": "projects/prompt-and-circumstance/tasks/PHASE1-002-film2-outline.md",
-      "status": "open",
+      "status": "blocked_rights_gate",
       "tier": [
         "1",
         "2"
       ],
       "output": "40-beat outline",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/1"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/1",
+      "rights_scope": "gated_creative_work"
     },
     {
       "id": "PHASE1-003",
       "title": "Film 3 structural outline",
       "path": "projects/prompt-and-circumstance/tasks/PHASE1-003-film3-outline.md",
-      "status": "open",
+      "status": "blocked_rights_gate",
       "tier": [
         "1",
         "2"
       ],
       "output": "40-beat outline",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/2"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/2",
+      "rights_scope": "gated_creative_work"
     },
     {
       "id": "PHASE1-004",
       "title": "Film 4 structural outline",
       "path": "projects/prompt-and-circumstance/tasks/PHASE1-004-film4-outline.md",
-      "status": "open",
+      "status": "blocked_rights_gate",
       "tier": [
         "1",
         "2"
       ],
       "output": "40-beat outline",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/3"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/3",
+      "rights_scope": "gated_creative_work"
     },
     {
       "id": "PHASE1-005",
       "title": "Film 5 structural outline",
       "path": "projects/prompt-and-circumstance/tasks/PHASE1-005-film5-outline.md",
-      "status": "open",
+      "status": "blocked_rights_gate",
       "tier": [
         "1",
         "2"
       ],
       "output": "40-beat outline",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/4"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/4",
+      "rights_scope": "gated_creative_work"
     },
     {
       "id": "PHASE1-006",
       "title": "Film 6 structural outline",
       "path": "projects/prompt-and-circumstance/tasks/PHASE1-006-film6-outline.md",
-      "status": "open",
+      "status": "blocked_rights_gate",
       "tier": [
         "1",
         "2"
       ],
       "output": "40-beat outline",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/5"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/5",
+      "rights_scope": "gated_creative_work"
     },
     {
       "id": "PHASE1-007",
       "title": "Production modality benchmark",
       "path": "projects/prompt-and-circumstance/production/modality-benchmark.md",
-      "status": "specification_ready",
+      "status": "blocked_rights_gate",
       "tier": [
         "2"
       ],
       "output": "five paired scene tests, scoring and decision memo",
-      "issue_url": "https://github.com/gemquota/meatware-/issues/6"
+      "issue_url": "https://github.com/gemquota/meatware-/issues/6",
+      "rights_scope": "gated_creative_work"
     }
   ],
   "governance_sources": [
