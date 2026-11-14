@@ -101,5 +101,17 @@
       "output": "five paired scene tests, scoring and decision memo",
       "issue_url": "https://github.com/gemquota/meatware-/issues/6"
     }
-  ]
+  ],
+  "governance_sources": [
+    "GOVERNANCE.md",
+    "MAINTAINERS.md",
+    "projects/prompt-and-circumstance/contributors/rights-decision-brief.md",
+    "projects/prompt-and-circumstance/contributors/faq.md",
+    "projects/prompt-and-circumstance/contributors/roles-and-progression.md"
+  ],
+  "recruitment": {
+    "pilot_issue": "https://github.com/gemquota/meatware-/issues/17",
+    "rights_gate_issue": "https://github.com/gemquota/meatware-/issues/16",
+    "interim_scope": "feedback, critique, continuity findings and clearly non-exclusive suggestions only"
+  }
 }
