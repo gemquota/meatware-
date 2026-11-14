@@ -24,6 +24,10 @@ SUBMISSION_KEYS = {
     "artifact", "summary", "assumptions", "canon_conflicts", "tool_disclosure",
     "rights_scope_acknowledged", "status",
 }
+REQUIRED_SUBMISSION_KEYS = {
+    "schema_version", "submission_id", "task_id", "contributor", "submitted_at",
+    "artifact", "summary", "rights_scope_acknowledged",
+}
 
 
 def load_json(path: Path):
@@ -166,7 +170,7 @@ def validate_submission(path: Path, registry: dict) -> list[str]:
     if not isinstance(payload, dict):
         return ["Submission must be a JSON object"]
     extra = set(payload) - SUBMISSION_KEYS
-    missing = SUBMISSION_KEYS - set(payload)
+    missing = REQUIRED_SUBMISSION_KEYS - set(payload)
     if extra:
         errors.append("Unknown fields: " + ", ".join(sorted(extra)))
     if missing:
