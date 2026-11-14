@@ -34,7 +34,11 @@ def load_json(path: Path):
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
-        raise ValueError(f"Missing file: {path.relative_to(ROOT)}")
+        try:
+            label = str(path.relative_to(ROOT))
+        except ValueError:
+            label = str(path)
+        raise ValueError(f"Missing file: {label}")
     except json.JSONDecodeError as exc:
         raise ValueError(f"Invalid JSON in {path.relative_to(ROOT)}: {exc}")
 
