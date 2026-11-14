@@ -18,6 +18,7 @@ Start with the [Contributor Quick-Start](contributors/quick-start.md), then choo
 
 - [Contribution guide](../../CONTRIBUTING.md)
 - [Contribution acquisition plan](contributors/contribution-acquisition.md)
+- [Outreach kit](contributors/outreach-kit.md)
 - [Credits and attribution policy](contributors/credits-and-attribution.md)
 - [GitHub task issues](https://github.com/gemquota/meatware-/issues)
 - [Machine-readable agent manifest](../../.well-known/agent-manifest.json)
