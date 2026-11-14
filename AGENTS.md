@@ -86,8 +86,8 @@ An agent may prepare a focused local diff or pull-request draft when authorized,
 ```bash
 python scripts/agent_tasks.py list
 python scripts/agent_tasks.py ready
-python scripts/agent_tasks.py show CONTRIB-001 --json
-python scripts/agent_tasks.py validate-registry --json
+python scripts/agent_tasks.py --json show CONTRIB-001
+python scripts/agent_tasks.py --json validate-registry
 python scripts/agent_tasks.py validate-submission path/to/submission.json
 python scripts/validate_project.py
 ```
