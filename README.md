@@ -37,11 +37,14 @@ You can contribute from a phone using a chat-based AI and a GitHub issue comment
 - [Production roadmap](projects/prompt-and-circumstance/production/roadmap.md)
 - [Source map](projects/prompt-and-circumstance/production/source-map.md)
 - [Architecture-expander prompt](projects/prompt-and-circumstance/meta_prompts/01-architecture-expander.md)
+- [Repository validation](VALIDATION.md)
 
 ## Principles
+
 - Preserve source provenance and distinguish established decisions from proposals.
 - Keep project canon under its own directory.
 - Prefer linked Markdown artifacts over monolithic documents.
 - Do not silently resolve contradictions in source material.
 - Treat generated ideas as proposals until explicitly adopted.
 - Review contributions before accepting them; automation is not editorial approval.
+- Keep structural validation automated and creative judgment human.
