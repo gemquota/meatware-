@@ -38,7 +38,8 @@ Start with the [Contributor Quick-Start](contributors/quick-start.md), then choo
 | meta_prompts/01-architecture-expander.md | Stateless prompt for generating missing operational modules |
 | tasks/PHASE1-001-film1-beat-sheet.md | Original Film 1 beat-sheet task specification |
 | tasks/PHASE1-002 through PHASE1-006 | Film 2–6 outline task specifications |
-| tasks/OPEN_TASKS.md | Human-readable task board |
+| tasks/OPEN_TASKS.md | Human-readable task board and live issue links |
+| contributors/CREDITS.json | Empty auditable contribution ledger |
 
 ## Canon status
 
