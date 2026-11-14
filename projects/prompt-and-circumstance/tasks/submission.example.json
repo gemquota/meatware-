@@ -10,9 +10,7 @@
   },
   "summary": "Example only: identifies a continuity question at a specific beat.",
   "assumptions": [],
-  "canon_conflicts": [
-    "Example only: explain the exact source conflict, if any."
-  ],
+  "canon_conflicts": [],
   "tool_disclosure": "Example only: disclose meaningful assistance when relevant.",
   "rights_scope_acknowledged": true,
   "status": "submitted"
