@@ -34,6 +34,12 @@ def check_repo_path(value: str, label: str, errors: list[str]) -> None:
         fail(errors, f"{label} points to missing file: {value}")
 
 
+def check_repo_target(value: str, label: str, errors: list[str]) -> None:
+    candidate = (ROOT / value).resolve()
+    if ROOT not in candidate.parents:
+        fail(errors, f"{label} escapes repository: {value}")
+
+
 def validate_json_contracts(errors: list[str]) -> None:
     canon_path = ROOT / "projects/prompt-and-circumstance/canon/canon.json"
     manifest_path = ROOT / ".well-known/agent-manifest.json"
@@ -150,10 +156,12 @@ def validate_task_registry(errors: list[str]) -> None:
         issue_url = task.get("issue_url", "")
         if not isinstance(issue_url, str) or not issue_url.startswith("https://github.com/gemquota/meatware-/issues/"):
             fail(errors, f"task registry: invalid issue URL for {task_id}")
-        for field in ("spec_path", "output_path"):
-            value = task.get(field)
-            if value is not None:
-                check_repo_path(value, f"task registry {task_id}.{field}", errors)
+        spec_path = task.get("spec_path")
+        if spec_path is not None:
+            check_repo_path(spec_path, f"task registry {task_id}.spec_path", errors)
+        output_path = task.get("output_path")
+        if output_path is not None:
+            check_repo_target(output_path, f"task registry {task_id}.output_path", errors)
         for value in task.get("source_paths", []):
             check_repo_path(value, f"task registry {task_id}.source_paths", errors)
     for task_id, task in by_id.items():
