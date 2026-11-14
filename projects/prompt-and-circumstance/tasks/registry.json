@@ -28,7 +28,7 @@
       "id": "PHASE1-001",
       "title": "Film 1 40-beat structural sheet editorial review",
       "kind": "editorial_review",
-      "status": "draft_completed_editorial_review",
+      "status": "open",
       "availability": "open",
       "tier": [
         "1",
@@ -278,9 +278,7 @@
         "projects/prompt-and-circumstance/canon/franchise-bible.md",
         "projects/prompt-and-circumstance/canon/continuity-register.md"
       ],
-      "depends_on": [
-        "PHASE1-001"
-      ],
+      "depends_on": [],
       "rights_scope": "feedback_only",
       "human_review_required": true,
       "acceptance": [
@@ -339,9 +337,7 @@
       "source_paths": [
         "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
       ],
-      "depends_on": [
-        "PHASE1-001"
-      ],
+      "depends_on": [],
       "rights_scope": "feedback_only",
       "human_review_required": true,
       "acceptance": [
@@ -370,9 +366,7 @@
       "source_paths": [
         "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
       ],
-      "depends_on": [
-        "PHASE1-001"
-      ],
+      "depends_on": [],
       "rights_scope": "feedback_only",
       "human_review_required": true,
       "acceptance": [
@@ -430,9 +424,7 @@
       "source_paths": [
         "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
       ],
-      "depends_on": [
-        "PHASE1-001"
-      ],
+      "depends_on": [],
       "rights_scope": "feedback_only",
       "human_review_required": true,
       "acceptance": [
@@ -461,9 +453,7 @@
       "source_paths": [
         "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
       ],
-      "depends_on": [
-        "PHASE1-001"
-      ],
+      "depends_on": [],
       "rights_scope": "feedback_only",
       "human_review_required": true,
       "acceptance": [
