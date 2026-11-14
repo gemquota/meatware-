@@ -44,10 +44,14 @@ The franchise bible and canon JSON describe current canon. The continuity regist
 
 Maintainers review for canon and continuity, task acceptance criteria, dramatic utility and originality, production feasibility where relevant, and provenance. Automated checks can catch format errors; they do not decide whether a joke is funny or a story works.
 
+## Rights and permitted use
+
+The project has not yet finalized its rights and licensing model. Until [the rights decision](projects/prompt-and-circumstance/contributors/rights-decision-brief.md) is resolved, please limit submissions to feedback, critique, continuity findings and clearly non-exclusive suggestions. Do not submit substantial scripts, artwork, music, voice performances or production assets for incorporation. A public issue comment does not grant commercial production rights.
+
 ## Credit and attribution
 Every accepted contribution should be attributable. The project proposes a base credit unit for a completed task and a possible multiplier for verified technical/agent contributions. These are proposals, not guaranteed rewards or ownership shares.
 
-Credit is awarded for accepted work, not prompt volume, token count, number of commits, or number of agents. See the credit policy.
+Credit is awarded for accepted work, not prompt volume, token count, number of commits, or number of agents. See the [credit policy](projects/prompt-and-circumstance/contributors/credits-and-attribution.md) and [contributor FAQ](projects/prompt-and-circumstance/contributors/faq.md).
 
 ## Conduct and safety
 - Be constructive and critique the work, not the contributor.
@@ -56,6 +60,8 @@ Credit is awarded for accepted work, not prompt volume, token count, number of c
 - Never grant an agent repository write permissions it does not need.
 - Disclose generated material and meaningful human edits.
 - Do not impersonate another contributor or claim work you did not perform.
+
+See also the [governance model](GOVERNANCE.md) and [maintainer review procedure](MAINTAINERS.md).
 
 ## Pull request checklist
 - [ ] Task ID included.
