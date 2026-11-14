@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Meatware Contribution Submission",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "submission_id",
+    "task_id",
+    "contributor",
+    "submitted_at",
+    "artifact",
+    "summary",
+    "rights_scope_acknowledged"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "submission_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]+-[0-9]{3}$"
+    },
+    "contributor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "description": "Chosen public handle only; do not provide private contact details."
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "type",
+        "reference"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "issue_comment",
+            "pull_request",
+            "repository_path",
+            "external_link"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "canon_conflicts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tool_disclosure": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "rights_scope_acknowledged": {
+      "const": true
+    },
+    "status": {
+      "enum": [
+        "submitted",
+        "in_review",
+        "revision_requested",
+        "accepted",
+        "rejected"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
