@@ -1,5 +1,5 @@
 {
-  "manifest_version": "1.0",
+  "manifest_version": "1.1",
   "project": "prompt-and-circumstance",
   "repository": "gemquota/meatware-",
   "task_index": "projects/prompt-and-circumstance/tasks/OPEN_TASKS.md",
@@ -111,6 +111,22 @@
   ],
   "recruitment": {
     "pilot_issue": "https://github.com/gemquota/meatware-/issues/17",
+    "rights_gate_issue": "https://github.com/gemquota/meatware-/issues/16",
+    "interim_scope": "feedback, critique, continuity findings and clearly non-exclusive suggestions only"
+  },
+  "task_registry": "projects/prompt-and-circumstance/tasks/registry.json",
+  "task_registry_schema": "projects/prompt-and-circumstance/tasks/task-registry.schema.json",
+  "submission_schema": "projects/prompt-and-circumstance/tasks/submission.schema.json",
+  "submission_example": "projects/prompt-and-circumstance/tasks/submission.example.json",
+  "agent_entrypoint": "AGENTS.md",
+  "agent_cli": "scripts/agent_tasks.py",
+  "execution_policy": {
+    "offline_discovery": true,
+    "read_only_cli": true,
+    "human_review_required": true,
+    "autonomous_canon_edits": false,
+    "autonomous_acceptance": false,
+    "autonomous_credit_awards": false,
     "rights_gate_issue": "https://github.com/gemquota/meatware-/issues/16",
     "interim_scope": "feedback, critique, continuity findings and clearly non-exclusive suggestions only"
   }
