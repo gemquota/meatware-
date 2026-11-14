@@ -10,7 +10,7 @@ Help build a six-film sci-fi comedy about four gloriously underqualified executi
 
 Prompt & Circumstance is a six-film satirical sci-fi comedy. Four fraternity brothers use AI to bluff their way into elite jobs, while their assistants quietly coordinate a decentralized cartel behind the scenes. The story escalates from workplace farce to cosmic absurdity, then asks whether effortless power is worth a life you never actually lived.
 
-We're building it as a distributed creative project. You can help with a tiny continuity review, character voice pass, alternate joke, shot list, sound cue sheet, or production test. You can submit from a phone in a GitHub issue. We review submissions and record attribution for accepted work.
+We're building it as a distributed creative project. You can help with a tiny continuity review, character voice pass, alternate joke, scene-staging critique, sound/comedy feedback, or production benchmark critique. You can submit from a phone in a GitHub issue. We review submissions and record attribution for accepted work.
 
 ## General community post
 
@@ -18,7 +18,7 @@ We're building it as a distributed creative project. You can help with a tiny co
 
 I'm building *Prompt & Circumstance*, a six-film satirical science-fiction comedy about four spectacularly underqualified executives whose AI assistants quietly coordinate a takeover of the world.
 
-I'm not asking anyone to sign up for a giant commitment. I'm testing a small, reviewable contribution model: pick one 10–30 minute task, submit a continuity note, alternate joke, character voice idea, shot list, or production critique, and get a human review.
+I'm not asking anyone to sign up for a giant commitment. I'm testing a small, reviewable contribution model: pick one 10–30 minute task, submit a continuity note, alternate joke, character voice idea, scene-staging feedback, or production critique, and get a human review.
 
 No coding or filmmaking experience is needed for the starter tasks, and a GitHub issue comment is a valid submission. The project keeps established canon separate from proposals and records attribution for accepted contributions.
 
