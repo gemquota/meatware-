@@ -22,6 +22,9 @@ The source PDF remains the archival source. The maintained working documentation
 - [Maintainer handbook](MAINTAINERS.md)
 - [Credits and attribution policy](projects/prompt-and-circumstance/contributors/credits-and-attribution.md)
 - [Machine-readable agent manifest](.well-known/agent-manifest.json)
+- [Agent operating contract](AGENTS.md)
+- [Machine-readable task registry](projects/prompt-and-circumstance/tasks/registry.json)
+- [Offline task discovery CLI](scripts/agent_tasks.py)
 
 You can contribute from a phone using a chat-based AI and a GitHub issue comment. No local development environment is required for Tier 1 tasks.
 
