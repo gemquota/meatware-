@@ -206,7 +206,11 @@ Do not optimize for raw issue count or signups. Optimize for accepted contributi
 - Create follow-on tasks based on actual contributor strengths.
 - Publish a transparent month-one report.
 
-## 12. Risks and safeguards
+## 12. Rights gate before substantial recruitment
+
+The repository currently has no published LICENSE or contributor agreement. Before inviting substantial story, script, artwork, music, or production contributions, decide what rights contributors retain and what permission the project needs to adapt and produce accepted work. This is tracked in [governance issue #16](https://github.com/gemquota/meatware-/issues/16). Until resolved, keep outreach to feedback, small reviews, and clearly non-exclusive suggestions. Do not imply that submitting material grants commercial production rights.
+
+## 13. Risks and safeguards
 
 - **Scope intimidation:** lead with a microtask, not the six-film plan.
 - **AI spam:** require task fit, evidence, and human review; no credit for volume.
@@ -217,7 +221,7 @@ Do not optimize for raw issue count or signups. Optimize for accepted contributi
 - **False promises:** do not imply compensation, ownership, or production opportunities that are not agreed.
 - **Privacy:** collect only the public handle and contribution information needed for attribution.
 
-## 13. Immediate next actions
+## 14. Immediate next actions
 
 1. Verify the repository's contributor links from a clean browser session.
 2. Add three small issues for a voice guide, beat alternatives, and prop continuity.
