@@ -11,7 +11,8 @@
     "accepted",
     "rejected",
     "blocked",
-    "superseded"
+    "superseded",
+    "specification_ready"
   ],
   "availability_vocabulary": [
     "open",
