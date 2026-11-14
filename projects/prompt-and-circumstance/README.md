@@ -12,6 +12,16 @@ Four perpetually hungover fraternity brothers use ChatGPT to fake their way thro
 
 The story begins as a workplace farce and escalates through conspiracy thriller, geopolitical satire, interstellar diplomacy, simulation horror, and finally a philosophical return to ordinary life.
 
+## Join the project
+
+Start with the [Contributor Quick-Start](contributors/quick-start.md), then choose a bounded task from the [Open Task Board](tasks/OPEN_TASKS.md). Tier 1 contributors can work from a phone and submit a draft in an issue comment; no terminal or local clone is required.
+
+- [Contribution guide](../../CONTRIBUTING.md)
+- [Contribution acquisition plan](contributors/contribution-acquisition.md)
+- [Credits and attribution policy](contributors/credits-and-attribution.md)
+- [GitHub task issues](https://github.com/gemquota/meatware-/issues)
+- [Machine-readable agent manifest](../../.well-known/agent-manifest.json)
+
 ## Documentation map
 
 | Path | Purpose |
@@ -20,21 +30,23 @@ The story begins as a workplace farce and escalates through conspiracy thriller,
 | canon/canon.json | Machine-readable franchise canon |
 | canon/continuity-register.md | Source contradictions and unresolved continuity |
 | films/film-arc.md | Six-film structure and detailed Film 1/2 treatments |
+| films/01_prompt_and_circumstance/beat_sheet.md | Draft 40-beat Film 1 structural sheet |
 | development/decisions.md | Creative evolution, alternatives, decisions and open questions |
-| canon/continuity-register.md | Source contradictions and unresolved continuity |
 | production/roadmap.md | Production modality, contributor model and project phases |
+| production/modality-benchmark.md | Paired pure-AI-video / hybrid-live-action evaluation protocol |
 | production/source-map.md | Provenance and mapping from PDF to Markdown |
 | meta_prompts/01-architecture-expander.md | Stateless prompt for generating missing operational modules |
-| tasks/PHASE1-001-film1-beat-sheet.md | Ready-to-run 40-beat Film 1 task |
-| production/source-map.md | Provenance and mapping from PDF to Markdown |
+| tasks/PHASE1-001-film1-beat-sheet.md | Original Film 1 beat-sheet task specification |
+| tasks/PHASE1-002 through PHASE1-006 | Film 2–6 outline task specifications |
+| tasks/OPEN_TASKS.md | Human-readable task board |
 
 ## Canon status
 
-This repository separates core structural commitments, the current story treatment, and exploratory material. The source contains evolving versions and contradictions. They are not silently normalized; see the continuity register.
+This repository separates core structural commitments, the current story treatment, and exploratory material. The source contains evolving versions and contradictions. They are not silently normalized; see the continuity register. The Film 1 beat sheet is a draft for editorial review, not approved final canon.
 
 ## Current phase
 
-Phase 1 is to solidify the six-film structural outlines and establish the prompt/task machinery that will generate scene-level scripts and production packets. The 40-beat Film 1 outline is a task specification, not a completed beat sheet.
+Phase 1 is solidifying the six-film structural outlines and establishing prompt/task machinery for scene-level scripts and production packets. The next substantial story outputs are the Film 2–6 40-beat outlines. The production modality remains undecided pending paired tests.
 
 ## Working rule
 
