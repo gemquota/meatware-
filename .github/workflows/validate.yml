@@ -20,6 +20,6 @@ jobs:
       - name: Validate canon, manifest, credits, task registry, schemas, and local links
         run: python scripts/validate_project.py
       - name: Validate agent task discovery and dependency graph
-        run: python scripts/agent_tasks.py validate-registry --json
+        run: python scripts/agent_tasks.py --json validate-registry
       - name: Smoke-test ready-task discovery
-        run: python scripts/agent_tasks.py ready --json
+        run: python scripts/agent_tasks.py --json ready
