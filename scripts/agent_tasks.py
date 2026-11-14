@@ -49,6 +49,12 @@ def safe_repo_file(value: str, label: str, errors: list[str]) -> None:
         errors.append(f"{label} is missing or escapes repository: {value}")
 
 
+def safe_repo_target(value: str, label: str, errors: list[str]) -> None:
+    candidate = (ROOT / value).resolve()
+    if ROOT not in candidate.parents:
+        errors.append(f"{label} escapes repository: {value}")
+
+
 def load_registry():
     data = load_json(REGISTRY_PATH)
     if not isinstance(data, dict) or not isinstance(data.get("tasks"), list):
@@ -91,10 +97,12 @@ def validate_registry(data: dict) -> list[str]:
             errors.append(f"{task_id}: issue_url must point to this repository")
         if task.get("human_review_required") is not True:
             errors.append(f"{task_id}: human_review_required must remain true")
-        for field in ("spec_path", "output_path"):
-            value = task.get(field)
-            if value is not None:
-                safe_repo_file(value, f"{task_id}.{field}", errors)
+        spec_path = task.get("spec_path")
+        if spec_path is not None:
+            safe_repo_file(spec_path, f"{task_id}.spec_path", errors)
+        output_path = task.get("output_path")
+        if output_path is not None:
+            safe_repo_target(output_path, f"{task_id}.output_path", errors)
         for field in ("source_paths",):
             values = task.get(field)
             if not isinstance(values, list):
