@@ -80,3 +80,8 @@ Thanks for contributing [specific item]. I've reviewed it and [accepted it / req
 ## Important precondition: rights clarity
 
 The repository currently has no published LICENSE or contributor agreement. Before asking strangers for substantial story, script, artwork, music, or production contributions, resolve the rights and permitted-use model in [governance issue #16](https://github.com/gemquota/meatware-/issues/16). Until then, limit public recruitment to feedback, small reviews, and clearly non-exclusive suggestions. Do not ask contributors to transfer rights or imply that submission alone grants commercial production rights.
+
+
+## Channel research
+
+Use the [outreach channel plan](outreach-channel-plan.md) for current audience targeting, source links and platform-specific posting guardrails.
