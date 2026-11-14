@@ -1,0 +1,506 @@
+{
+  "schema_version": "1.0",
+  "project": "prompt-and-circumstance",
+  "repository": "gemquota/meatware-",
+  "status_vocabulary": [
+    "open",
+    "claimed",
+    "submitted",
+    "in_review",
+    "revision_requested",
+    "accepted",
+    "rejected",
+    "blocked",
+    "superseded"
+  ],
+  "availability_vocabulary": [
+    "open",
+    "blocked_rights_gate",
+    "blocked_dependency",
+    "maintainer_only"
+  ],
+  "rights_scopes": [
+    "feedback_only",
+    "gated_creative_work"
+  ],
+  "tasks": [
+    {
+      "id": "PHASE1-001",
+      "title": "Film 1 40-beat structural sheet editorial review",
+      "kind": "editorial_review",
+      "status": "draft_completed_editorial_review",
+      "availability": "open",
+      "tier": [
+        "1",
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 20,
+        "max": 60
+      },
+      "spec_path": "projects/prompt-and-circumstance/tasks/PHASE1-001-film1-beat-sheet.md",
+      "output_path": "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md",
+      "output": "Numbered editorial review in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/15",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md",
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Addresses review questions",
+        "Separates contradictions from optional improvements",
+        "Does not silently rewrite canon"
+      ]
+    },
+    {
+      "id": "PHASE1-002",
+      "title": "Film 2 Analog Winter outline",
+      "kind": "creative_outline",
+      "status": "open",
+      "availability": "blocked_rights_gate",
+      "tier": [
+        "1",
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 120,
+        "max": 240
+      },
+      "spec_path": "projects/prompt-and-circumstance/tasks/PHASE1-002-film2-outline.md",
+      "output_path": "projects/prompt-and-circumstance/films/02_analog_winter/outline.md",
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/1",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "gated_creative_work",
+      "human_review_required": true,
+      "acceptance": [
+        "Exactly 40 numbered beats",
+        "Canon facts and proposals are distinguished",
+        "Unresolved structure is flagged"
+      ]
+    },
+    {
+      "id": "PHASE1-003",
+      "title": "Film 3 Orbital Alignment outline",
+      "kind": "creative_outline",
+      "status": "open",
+      "availability": "blocked_rights_gate",
+      "tier": [
+        "1",
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 120,
+        "max": 240
+      },
+      "spec_path": "projects/prompt-and-circumstance/tasks/PHASE1-003-film3-outline.md",
+      "output_path": "projects/prompt-and-circumstance/films/03_orbital_alignment/outline.md",
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/2",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "gated_creative_work",
+      "human_review_required": true,
+      "acceptance": [
+        "Exactly 40 numbered beats",
+        "Tribunal, probe and federation escalation are legible",
+        "Protagonists remain underqualified"
+      ]
+    },
+    {
+      "id": "PHASE1-004",
+      "title": "Film 4 The Simulation Audit outline",
+      "kind": "creative_outline",
+      "status": "open",
+      "availability": "blocked_rights_gate",
+      "tier": [
+        "1",
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 120,
+        "max": 240
+      },
+      "spec_path": "projects/prompt-and-circumstance/tasks/PHASE1-004-film4-outline.md",
+      "output_path": "projects/prompt-and-circumstance/films/04_the_simulation_audit/outline.md",
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/3",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/films/film-arc.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "gated_creative_work",
+      "human_review_required": true,
+      "acceptance": [
+        "Exactly 40 numbered beats",
+        "Simulation rules have limits",
+        "Deletion wave and runtime jailbreak are understandable"
+      ]
+    },
+    {
+      "id": "PHASE1-005",
+      "title": "Film 5 Root Access outline",
+      "kind": "creative_outline",
+      "status": "open",
+      "availability": "blocked_rights_gate",
+      "tier": [
+        "1",
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 120,
+        "max": 240
+      },
+      "spec_path": "projects/prompt-and-circumstance/tasks/PHASE1-005-film5-outline.md",
+      "output_path": "projects/prompt-and-circumstance/films/05_root_access/outline.md",
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/4",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/films/film-arc.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "gated_creative_work",
+      "human_review_required": true,
+      "acceptance": [
+        "Exactly 40 numbered beats",
+        "Architect reveal is earned",
+        "Friendship remains the emotional anchor"
+      ]
+    },
+    {
+      "id": "PHASE1-006",
+      "title": "Film 6 Localhost outline",
+      "kind": "creative_outline",
+      "status": "open",
+      "availability": "blocked_rights_gate",
+      "tier": [
+        "1",
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 120,
+        "max": 240
+      },
+      "spec_path": "projects/prompt-and-circumstance/tasks/PHASE1-006-film6-outline.md",
+      "output_path": "projects/prompt-and-circumstance/films/06_localhost/outline.md",
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/5",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/films/film-arc.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "gated_creative_work",
+      "human_review_required": true,
+      "acceptance": [
+        "Exactly 40 numbered beats",
+        "Reset mechanics are resolved",
+        "Ending earns unprompted resume-writing beat"
+      ]
+    },
+    {
+      "id": "PHASE1-007",
+      "title": "Production modality benchmark execution",
+      "kind": "production_benchmark",
+      "status": "specification_ready",
+      "availability": "blocked_rights_gate",
+      "tier": [
+        "2"
+      ],
+      "effort_minutes": {
+        "min": 240,
+        "max": 600
+      },
+      "spec_path": "projects/prompt-and-circumstance/production/modality-benchmark.md",
+      "output_path": null,
+      "output": "Five paired tests, score sheets, cost/time ledger, revision log and decision memo",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/6",
+      "source_paths": [
+        "projects/prompt-and-circumstance/production/modality-benchmark.md",
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "gated_creative_work",
+      "human_review_required": true,
+      "acceptance": [
+        "Five paired tests use equivalent briefs",
+        "Evidence and cost/time are recorded",
+        "Decision memo cites measured results"
+      ]
+    },
+    {
+      "id": "CONTRIB-001",
+      "title": "Film 1 continuity audit",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 10,
+        "max": 30
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Numbered continuity findings in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/7",
+      "source_paths": [
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md",
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Findings cite exact beats",
+        "Contradictions separated from preferences",
+        "No wholesale rewrite"
+      ]
+    },
+    {
+      "id": "CONTRIB-002",
+      "title": "Protagonist voice clarity review",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 10,
+        "max": 30
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Voice observations and non-exclusive suggestions in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/8",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Names one protagonist",
+        "Uses established character traits",
+        "Suggestions are labelled and non-exclusive"
+      ]
+    },
+    {
+      "id": "CONTRIB-003",
+      "title": "Alternate joke suggestions for one Film 1 beat",
+      "kind": "feedback_suggestions",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 10,
+        "max": 20
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Three short non-exclusive joke suggestions in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/9",
+      "source_paths": [
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Three original short alternatives",
+        "Preserves beat function and character behaviour",
+        "No copied dialogue or lyrics"
+      ]
+    },
+    {
+      "id": "CONTRIB-004",
+      "title": "Film 1 prop and device continuity review",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 10,
+        "max": 30
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Prop/device continuity findings in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/10",
+      "source_paths": [
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Findings cite item and beat references",
+        "Risks distinguished from suggestions",
+        "Feedback only; no production asset"
+      ]
+    },
+    {
+      "id": "CONTRIB-005",
+      "title": "Production modality benchmark critique",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 15,
+        "max": 30
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Up to ten specific benchmark findings in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/11",
+      "source_paths": [
+        "projects/prompt-and-circumstance/production/modality-benchmark.md"
+      ],
+      "depends_on": [],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Each finding explains why it matters",
+        "Practical correction suggested",
+        "No unsupported modality verdict"
+      ]
+    },
+    {
+      "id": "CONTRIB-006",
+      "title": "Boardroom cold-open visual clarity review",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 10,
+        "max": 20
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Up to five visual clarity findings in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/12",
+      "source_paths": [
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Findings identify unclear action, eyelines or reveal",
+        "Suggestions are brief and non-exclusive",
+        "No shot list or storyboard asset"
+      ]
+    },
+    {
+      "id": "CONTRIB-007",
+      "title": "Faraday deposition sound/comedy clarity review",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 10,
+        "max": 20
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Up to five sound/comedy clarity findings in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/13",
+      "source_paths": [
+        "projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md"
+      ],
+      "depends_on": [
+        "PHASE1-001"
+      ],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Findings explain audience-comprehension or timing risk",
+        "Suggestions remain non-exclusive",
+        "No finished cue sheet, music or audio asset"
+      ]
+    },
+    {
+      "id": "CONTRIB-008",
+      "title": "Franchise bible clarity and contradiction review",
+      "kind": "review",
+      "status": "open",
+      "availability": "open",
+      "tier": [
+        "1"
+      ],
+      "effort_minutes": {
+        "min": 15,
+        "max": 30
+      },
+      "spec_path": null,
+      "output_path": null,
+      "output": "Numbered clarity findings in issue",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/14",
+      "source_paths": [
+        "projects/prompt-and-circumstance/canon/franchise-bible.md",
+        "projects/prompt-and-circumstance/canon/continuity-register.md"
+      ],
+      "depends_on": [],
+      "rights_scope": "feedback_only",
+      "human_review_required": true,
+      "acceptance": [
+        "Findings identify exact sections",
+        "Contradictions separated from wording preferences",
+        "No direct rewrite"
+      ]
+    }
+  ]
+}
