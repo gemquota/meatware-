@@ -23,3 +23,5 @@ jobs:
         run: python scripts/agent_tasks.py --json validate-registry
       - name: Smoke-test ready-task discovery
         run: python scripts/agent_tasks.py --json ready
+      - name: Validate example contribution record
+        run: python scripts/agent_tasks.py validate-submission projects/prompt-and-circumstance/tasks/submission.example.json
