@@ -15,14 +15,14 @@ This is the human-readable task index. GitHub issues are the live claim/status s
 | [PHASE1-007](../production/modality-benchmark.md) | Run paired production modality tests | Tier 2 preferred; Tier 1 review | [Issue #6](https://github.com/gemquota/meatware-/issues/6) |
 
 ## Small, low-friction contribution ideas
-- **CONTRIB-001:** Flag continuity conflicts in Film 1 beat sheet.
-- **CONTRIB-002:** Write a 1-page voice guide for one protagonist, using only established traits.
-- **CONTRIB-003:** Propose three alternate versions of one Film 1 beat without changing its function.
-- **CONTRIB-004:** Create a prop and device continuity checklist for Film 1.
-- **CONTRIB-005:** Review the modality benchmark and identify missing evaluation criteria.
-- **CONTRIB-006:** Create a 60–90 second animatic shot list for the boardroom cold open.
-- **CONTRIB-007:** Create a sound-design cue sheet for the Faraday deposition.
-- **CONTRIB-008:** Proofread the franchise bible and report only factual contradictions or unclear wording.
+- **CONTRIB-001:** Flag continuity conflicts in Film 1 beat sheet. ([Issue #7](https://github.com/gemquota/meatware-/issues/7))
+- **CONTRIB-002:** Write a 1-page voice guide for one protagonist, using only established traits. ([Issue #8](https://github.com/gemquota/meatware-/issues/8))
+- **CONTRIB-003:** Propose three alternate versions of one Film 1 beat without changing its function. ([Issue #9](https://github.com/gemquota/meatware-/issues/9))
+- **CONTRIB-004:** Create a prop and device continuity checklist for Film 1. ([Issue #10](https://github.com/gemquota/meatware-/issues/10))
+- **CONTRIB-005:** Review the modality benchmark and identify missing evaluation criteria. ([Issue #11](https://github.com/gemquota/meatware-/issues/11))
+- **CONTRIB-006:** Create a 60–90 second animatic shot list for the boardroom cold open. ([Issue #12](https://github.com/gemquota/meatware-/issues/12))
+- **CONTRIB-007:** Create a sound-design cue sheet for the Faraday deposition. ([Issue #13](https://github.com/gemquota/meatware-/issues/13))
+- **CONTRIB-008:** Proofread the franchise bible and report only factual contradictions or unclear wording. ([Issue #14](https://github.com/gemquota/meatware-/issues/14))
 
 ## Claiming and submitting
 1. Check the corresponding GitHub issue.
