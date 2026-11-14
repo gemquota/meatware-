@@ -27,7 +27,8 @@
         "1",
         "2"
       ],
-      "output": "40 numbered beats"
+      "output": "40 numbered beats",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/15"
     },
     {
       "id": "PHASE1-002",
@@ -38,7 +39,8 @@
         "1",
         "2"
       ],
-      "output": "40-beat outline"
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/1"
     },
     {
       "id": "PHASE1-003",
@@ -49,7 +51,8 @@
         "1",
         "2"
       ],
-      "output": "40-beat outline"
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/2"
     },
     {
       "id": "PHASE1-004",
@@ -60,7 +63,8 @@
         "1",
         "2"
       ],
-      "output": "40-beat outline"
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/3"
     },
     {
       "id": "PHASE1-005",
@@ -71,7 +75,8 @@
         "1",
         "2"
       ],
-      "output": "40-beat outline"
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/4"
     },
     {
       "id": "PHASE1-006",
@@ -82,7 +87,8 @@
         "1",
         "2"
       ],
-      "output": "40-beat outline"
+      "output": "40-beat outline",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/5"
     },
     {
       "id": "PHASE1-007",
@@ -92,7 +98,8 @@
       "tier": [
         "2"
       ],
-      "output": "five paired scene tests, scoring and decision memo"
+      "output": "five paired scene tests, scoring and decision memo",
+      "issue_url": "https://github.com/gemquota/meatware-/issues/6"
     }
   ]
 }
