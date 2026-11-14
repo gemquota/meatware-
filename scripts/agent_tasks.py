@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "projects/prompt-and-circumstance/tasks/registry.json"
-STATUSES = {"open", "claimed", "submitted", "in_review", "revision_requested", "accepted", "rejected", "blocked", "superseded"}
+STATUSES = {"open", "claimed", "submitted", "in_review", "revision_requested", "accepted", "rejected", "blocked", "superseded", "specification_ready"}
 AVAILABILITY = {"open", "blocked_rights_gate", "blocked_dependency", "maintainer_only"}
 RIGHTS_SCOPES = {"feedback_only", "gated_creative_work"}
 SUBMISSION_KEYS = {
