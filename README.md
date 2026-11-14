@@ -25,3 +25,6 @@ The source PDF has been decomposed into a navigable Markdown documentation set. 
 - [Production roadmap](projects/prompt-and-circumstance/production/roadmap.md)
 - [Architecture-expander prompt](projects/prompt-and-circumstance/meta_prompts/01-architecture-expander.md)
 - [Film 1 beat-sheet task](projects/prompt-and-circumstance/tasks/PHASE1-001-film1-beat-sheet.md)
+- [Continuity register](projects/prompt-and-circumstance/canon/continuity-register.md)
+- [Source map](projects/prompt-and-circumstance/production/source-map.md)
+- [Machine-readable canon](projects/prompt-and-circumstance/canon/canon.json)
