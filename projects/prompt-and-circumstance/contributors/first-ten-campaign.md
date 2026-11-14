@@ -8,7 +8,8 @@ The pilot is limited to low-risk feedback and review:
 - Character voice observations.
 - Alternate joke suggestions.
 - Production benchmark critique.
-- Shot-list and sound-design feedback.
+- Feedback on whether the boardroom scene's visual staging is clear.
+- Feedback on whether the Faraday deposition's sound beats support the comedy.
 - Clarity and onboarding feedback.
 
 Until the rights decision is resolved, do not solicit finished scripts, artwork, music, voice performances or substantial production assets.
@@ -19,7 +20,7 @@ Until the rights decision is resolved, do not solicit finished scripts, artwork,
 |---|---|---|---|
 | Screenwriters / comedy writers | Does story and joke logic work? | Beat-sheet continuity review or alternate beat | Asking for a full screenplay |
 | Actors / performers | Are characters playable and distinct? | Voice guide or performance note | Unpaid recorded performance |
-| Filmmakers / editors | Is the scene producible and cuttable? | Shot list or benchmark critique | Vague “help make a film” pitch |
+| Filmmakers / editors | Is the scene visually legible and plausibly staged? | Scene-staging critique or benchmark critique | Vague “help make a film” pitch |
 | AI video creators | What breaks in repeatability and identity? | Benchmark critique | Claiming the pipeline is proven |
 | Developers / agent builders | Is task discovery and validation sound? | Manifest/schema critique | Broad repository write access |
 | General comedy fans | Which premise/beat is unclear or funny? | One-beat feedback | Technical setup |
