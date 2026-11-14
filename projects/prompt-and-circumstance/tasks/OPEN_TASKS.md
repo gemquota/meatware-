@@ -6,7 +6,7 @@ This is the human-readable task index. GitHub issues are the live claim/status s
 
 | Task | Deliverable | Tier | Status / claim |
 |---|---|---|---|
-| [PHASE1-001](PHASE1-001-film1-beat-sheet.md) | Film 1 40-beat sheet | Tier 1 / Tier 2 | Draft completed; editorial review |
+| [PHASE1-001](PHASE1-001-film1-beat-sheet.md) | Film 1 40-beat sheet | Tier 1 / Tier 2 | Draft completed; [editorial review issue #15](https://github.com/gemquota/meatware-/issues/15) |
 | [PHASE1-002](PHASE1-002-film2-outline.md) | Film 2 40-beat outline | Tier 1 / Tier 2 | [Issue #1](https://github.com/gemquota/meatware-/issues/1) |
 | [PHASE1-003](PHASE1-003-film3-outline.md) | Film 3 40-beat outline | Tier 1 / Tier 2 | [Issue #2](https://github.com/gemquota/meatware-/issues/2) |
 | [PHASE1-004](PHASE1-004-film4-outline.md) | Film 4 40-beat outline | Tier 1 / Tier 2 | [Issue #3](https://github.com/gemquota/meatware-/issues/3) |
