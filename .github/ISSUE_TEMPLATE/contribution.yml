@@ -1,5 +1,5 @@
 name: Submit a contribution
-description: Submit a draft, review, continuity finding, or production idea
+description: Submit feedback, critique, continuity findings, or non-exclusive suggestions
 title: "[Contribution] "
 body:
   - type: input
@@ -15,20 +15,20 @@ body:
     attributes:
       label: Contribution type
       options:
-        - Story / outline
-        - Character / dialogue
         - Continuity review
-        - Production / visual / audio
-        - Tooling / automation
-        - Documentation
-        - Other
+        - Character / voice feedback
+        - Alternate joke suggestions
+        - Production / benchmark critique
+        - Documentation / onboarding feedback
+        - Tooling / automation feedback
+        - Other feedback
     validations:
       required: true
   - type: textarea
     id: contribution
     attributes:
       label: Contribution
-      description: Paste your draft or describe the proposed change.
+      description: Submit feedback or clearly non-exclusive suggestions. Until rights are resolved, do not submit finished scripts, artwork, music, performances, or production assets for incorporation.
     validations:
       required: true
   - type: textarea
