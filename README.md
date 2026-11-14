@@ -15,6 +15,7 @@ The source PDF remains the archival source. The maintained working documentation
 - [Open task board](projects/prompt-and-circumstance/tasks/OPEN_TASKS.md)
 - [Contribution guide](CONTRIBUTING.md)
 - [Contribution acquisition plan](projects/prompt-and-circumstance/contributors/contribution-acquisition.md)
+- [Outreach kit](projects/prompt-and-circumstance/contributors/outreach-kit.md)
 - [Credits and attribution policy](projects/prompt-and-circumstance/contributors/credits-and-attribution.md)
 - [Machine-readable agent manifest](.well-known/agent-manifest.json)
 
