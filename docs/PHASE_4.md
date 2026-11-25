@@ -21,6 +21,8 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 - [x] Pairwise and arbitrary fixed-arity participant combinations.
 - [x] Explicit per-rule evaluation budgets.
 - [x] Optional deterministic eligibility predicates filter participant combinations before evaluation.
+- [x] Browser experiment forms persistent generic relations between eligible nearby entity pairs using the Rust scheduler and event log.
+- [x] Browser displays relation edges/count and exports/replays the resulting structural transitions.
 - [x] Stable rule ordering and duplicate rule-key rejection.
 - [x] Rule key/version included in deterministic proposal identity.
 - [x] Serializable rule descriptors capture the scheduler parameters and version metadata; executable evaluator identity remains tied to the build.
@@ -39,12 +41,12 @@ The evaluator returns proposals, not accepted outcomes. Conflicts, invalid edits
 
 ## Verification
 
-The Rust test suite is the authoritative check for this increment. CI must verify native compilation and tests before this work is treated as integrated. Browser MVP behaviour is unchanged; this increment does not claim to add visible interaction dynamics to the deployed page.
+The Rust test suite is the authoritative check for this increment. CI must verify native compilation and tests before this work is treated as integrated. The browser MVP now exposes a one-shot relation-formation experiment. It remains a narrow structural demonstration, not evidence of evolutionary emergence.
 
 ## Next increments
 
 1. Add a portable declarative evaluator format only if experiments demonstrate that compiled evaluators are too restrictive.
-2. Add indexed local-neighbourhood candidate generation.
+2. Replace global pair enumeration with indexed local-neighbourhood candidate generation.
 3. Add directed participant ordering and multi-party interaction experiments.
 4. Extend generic duplication/fusion/fragmentation compositions.
 5. Add interaction and proposal outcome traces to the event log.
