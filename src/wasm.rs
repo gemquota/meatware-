@@ -75,6 +75,8 @@ pub struct World {
     coupling: f64,
     noise: f64,
     radius: f64,
+    motion: f64,
+    damping: f64,
     seed: u32,
     initial_entities: usize,
     initial_state_hash: String,
@@ -94,6 +96,8 @@ impl World {
             properties.insert("y".into(), Value::Float(random.unit_f64()));
             properties.insert("a".into(), Value::Float(random.unit_f64()));
             properties.insert("b".into(), Value::Float(random.unit_f64()));
+            properties.insert("vx".into(), Value::Float(0.0));
+            properties.insert("vy".into(), Value::Float(0.0));
             state.entities.insert(id, Entity { id, properties });
         }
         state.next_id = state.entities.len() as u64 + 1;
@@ -103,6 +107,7 @@ impl World {
         Ok(World {
             state, log, random,
             coupling: 0.8, noise: 0.008, radius: 0.055,
+            motion: 1.0, damping: 0.985,
             seed, initial_entities, initial_state_hash: format!("{initial_hash:016x}"),
             conflict_policy: ConflictPolicy::Reject,
             used_event_local_streams: false,
@@ -154,18 +159,25 @@ impl World {
         out
     }
 
+    /// Advance the substrate with inertial motion, short-range exclusion,
+    /// channel-mediated attraction/repulsion and persistent relation tension.
     pub fn step(&mut self, steps: u32) -> Result<(), JsValue> {
         for _ in 0..steps.min(1000) {
             let ids: Vec<u64> = self.state.entities.keys().copied().collect();
             let n = ids.len();
             let mut da = vec![0.0; n];
             let mut db = vec![0.0; n];
-            let positions: Vec<(f64, f64, f64, f64)> = ids.iter().map(|id| {
+            let mut fx = vec![0.0; n];
+            let mut fy = vec![0.0; n];
+            let positions: Vec<(f64, f64, f64, f64, f64, f64)> = ids.iter().map(|id| {
                 let p = &self.state.entities[id].properties;
-                (number(p, "x"), number(p, "y"), number(p, "a"), number(p, "b"))
+                (number(p, "x"), number(p, "y"), number(p, "a"), number(p, "b"),
+                 number(p, "vx"), number(p, "vy"))
             }).collect();
             let r2 = self.radius * self.radius;
 
+            // Pair forces are equal and opposite. Similar state vectors attract;
+            // contrasting vectors repel. A steep short-range term prevents collapse.
             for i in 0..n {
                 for j in (i + 1)..n {
                     let mut dx = positions[j].0 - positions[i].0;
@@ -173,23 +185,66 @@ impl World {
                     if dx > 0.5 { dx -= 1.0; } else if dx < -0.5 { dx += 1.0; }
                     if dy > 0.5 { dy -= 1.0; } else if dy < -0.5 { dy += 1.0; }
                     let d2 = dx * dx + dy * dy;
-                    if d2 < r2 {
-                        let weight = (1.0 - d2 / r2) * self.coupling * 0.025;
-                        da[i] += (positions[j].2 - positions[i].2) * weight;
-                        da[j] += (positions[i].2 - positions[j].2) * weight;
-                        db[i] += (positions[j].3 - positions[i].3) * weight;
-                        db[j] += (positions[i].3 - positions[j].3) * weight;
-                    }
+                    if d2 >= r2 { continue; }
+                    let d = d2.sqrt().max(0.002);
+                    let proximity = 1.0 - d / self.radius.max(0.005);
+                    let similarity = ((positions[i].2 - 0.5) * (positions[j].2 - 0.5)
+                        + (positions[i].3 - 0.5) * (positions[j].3 - 0.5)) * 8.0;
+                    let exclusion = if d < 0.012 { -(0.012 - d) * 0.035 } else { 0.0 };
+                    let force = (similarity * 0.000012 * proximity + exclusion)
+                        * self.coupling * self.motion;
+                    let inv_d = 1.0 / d;
+                    let px = dx * inv_d * force;
+                    let py = dy * inv_d * force;
+                    fx[i] += px; fy[i] += py;
+                    fx[j] -= px; fy[j] -= py;
+
+                    let exchange = proximity * self.coupling * 0.018;
+                    da[i] += (positions[j].2 - positions[i].2) * exchange;
+                    da[j] += (positions[i].2 - positions[j].2) * exchange;
+                    db[i] += (positions[j].3 - positions[i].3) * exchange;
+                    db[j] += (positions[i].3 - positions[j].3) * exchange;
                 }
+            }
+
+            // Persistent relationships exert a weak spring-like pull toward their
+            // recorded separation. They are not decorative lines detached from dynamics.
+            for relation in self.state.relations.values() {
+                if relation.endpoints.len() != 2 { continue; }
+                let (a, b) = match (&relation.endpoints[0], &relation.endpoints[1]) {
+                    (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
+                    _ => continue,
+                };
+                let (Some(i), Some(j)) = (ids.iter().position(|id| *id == a), ids.iter().position(|id| *id == b)) else { continue; };
+                let mut dx = positions[j].0 - positions[i].0;
+                let mut dy = positions[j].1 - positions[i].1;
+                if dx > 0.5 { dx -= 1.0; } else if dx < -0.5 { dx += 1.0; }
+                if dy > 0.5 { dy -= 1.0; } else if dy < -0.5 { dy += 1.0; }
+                let d = (dx * dx + dy * dy).sqrt().max(0.002);
+                let rest = match relation.properties.get("distance_sq") {
+                    Some(Value::Float(v)) => v.max(0.0).sqrt(),
+                    _ => 0.04,
+                };
+                let tension = (d - rest).clamp(-0.15, 0.15) * 0.0007 * self.motion;
+                let px = dx / d * tension;
+                let py = dy / d * tension;
+                fx[i] += px; fy[i] += py;
+                fx[j] -= px; fy[j] -= py;
             }
 
             let boundary = self.state.boundary;
             let mut proposals = Vec::with_capacity(n);
             for i in 0..n {
+                let vx = (positions[i].4 * self.damping + fx[i]
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.012).clamp(-0.006, 0.006);
+                let vy = (positions[i].5 * self.damping + fy[i]
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.012).clamp(-0.006, 0.006);
+                let speed = (vx * vx + vy * vy).sqrt();
+                let (vx, vy) = if speed > 0.004 { (vx * 0.004 / speed, vy * 0.004 / speed) } else { (vx, vy) };
                 let a = (positions[i].2 + da[i] + (self.random.unit_f64() - 0.5) * self.noise).clamp(0.0, 1.0);
                 let b = (positions[i].3 + db[i] + (self.random.unit_f64() - 0.5) * self.noise).clamp(0.0, 1.0);
-                let x = (positions[i].0 + (a - 0.5) * 0.00045 + (self.random.unit_f64() - 0.5) * 0.00015).rem_euclid(1.0);
-                let y = (positions[i].1 + (b - 0.5) * 0.00045 + (self.random.unit_f64() - 0.5) * 0.00015).rem_euclid(1.0);
+                let x = (positions[i].0 + vx).rem_euclid(1.0);
+                let y = (positions[i].1 + vy).rem_euclid(1.0);
                 let id = ids[i];
                 proposals.push(Proposal {
                     key: id,
@@ -200,6 +255,8 @@ impl World {
                         Edit::SetEntityProperty { id, key: "b".into(), value: Value::Float(b) },
                         Edit::SetEntityProperty { id, key: "x".into(), value: Value::Float(x) },
                         Edit::SetEntityProperty { id, key: "y".into(), value: Value::Float(y) },
+                        Edit::SetEntityProperty { id, key: "vx".into(), value: Value::Float(vx) },
+                        Edit::SetEntityProperty { id, key: "vy".into(), value: Value::Float(vy) },
                     ],
                 });
             }
@@ -212,6 +269,8 @@ impl World {
     pub fn set_coupling(&mut self, value: f64) { self.coupling = value.clamp(0.0, 2.0); }
     pub fn set_noise(&mut self, value: f64) { self.noise = value.clamp(0.0, 0.1); }
     pub fn set_radius(&mut self, value: f64) { self.radius = value.clamp(0.005, 0.25); }
+    pub fn set_motion(&mut self, value: f64) { self.motion = value.clamp(0.1, 3.0); }
+    pub fn set_damping(&mut self, value: f64) { self.damping = value.clamp(0.90, 0.999); }
     pub fn count(&self) -> usize { self.state.entities.len() }
     pub fn tick(&self) -> u64 { self.state.boundary }
     pub fn record_count(&self) -> usize { self.log.records.len() }
@@ -221,6 +280,15 @@ impl World {
         for entity in self.state.entities.values() {
             out.push(number(&entity.properties, "x"));
             out.push(number(&entity.properties, "y"));
+        }
+        out
+    }
+
+    pub fn velocities(&self) -> Vec<f64> {
+        let mut out = Vec::with_capacity(self.state.entities.len() * 2);
+        for entity in self.state.entities.values() {
+            out.push(number(&entity.properties, "vx"));
+            out.push(number(&entity.properties, "vy"));
         }
         out
     }
@@ -269,6 +337,8 @@ impl World {
         parameters.insert("coupling".into(), Value::Float(self.coupling));
         parameters.insert("noise".into(), Value::Float(self.noise));
         parameters.insert("interaction_radius".into(), Value::Float(self.radius));
+        parameters.insert("motion_strength".into(), Value::Float(self.motion));
+        parameters.insert("velocity_damping".into(), Value::Float(self.damping));
         let manifest = RunManifest {
             format: "meatware-run-manifest".into(),
             schema_version: 1,
