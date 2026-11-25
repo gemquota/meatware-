@@ -75,6 +75,7 @@ pub struct World {
     log: EventLog,
     random: RandomStream,
     coupling: f64,
+    alignment: f64,
     noise: f64,
     radius: f64,
     motion: f64,
@@ -108,7 +109,7 @@ impl World {
         let log = EventLog::new(&state).map_err(|e| JsValue::from_str(&e.to_string()))?;
         Ok(World {
             state, log, random,
-            coupling: 0.8, noise: 0.008, radius: 0.055,
+            coupling: 0.8, alignment: 0.8, noise: 0.008, radius: 0.055,
             motion: 1.0, damping: 0.985,
             seed, initial_entities, initial_state_hash: format!("{initial_hash:016x}"),
             conflict_policy: ConflictPolicy::Reject,
@@ -245,7 +246,7 @@ impl World {
                     fx[i] += px; fy[i] += py;
                     fx[j] -= px; fy[j] -= py;
                     // Local velocity alignment creates coherent collective motion.
-                    let align = proximity * self.coupling * self.motion * 0.018;
+                    let align = proximity * self.alignment * self.motion * 0.08;
                     fx[i] += (positions[j].4 - positions[i].4) * align;
                     fy[i] += (positions[j].5 - positions[i].5) * align;
                     fx[j] += (positions[i].4 - positions[j].4) * align;
@@ -347,6 +348,7 @@ impl World {
     }
 
     pub fn set_coupling(&mut self, value: f64) { self.coupling = value.clamp(0.0, 2.0); }
+    pub fn set_alignment(&mut self, value: f64) { self.alignment = value.clamp(0.0, 3.0); }
     pub fn set_noise(&mut self, value: f64) { self.noise = value.clamp(0.0, 0.1); }
     pub fn set_radius(&mut self, value: f64) { self.radius = value.clamp(0.005, 0.25); }
     pub fn set_motion(&mut self, value: f64) { self.motion = value.clamp(0.1, 3.0); }
@@ -415,6 +417,7 @@ impl World {
         let replay_state_hash = self.replay_hash()?;
         let mut parameters = Properties::new();
         parameters.insert("coupling".into(), Value::Float(self.coupling));
+        parameters.insert("collective_alignment".into(), Value::Float(self.alignment));
         parameters.insert("noise".into(), Value::Float(self.noise));
         parameters.insert("interaction_radius".into(), Value::Float(self.radius));
         parameters.insert("motion_strength".into(), Value::Float(self.motion));
