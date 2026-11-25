@@ -8,7 +8,7 @@ This document defines the abstract substrate independently of any programming la
 
 ## 1. Scope and exclusions
 
-The substrate represents distinguishable state-bearing items and relations between them. It does not represent biological categories. There are no built-in organisms, cells, genes, species, genomes, membranes, metabolisms, reproduction cycles, fitness values or evolutionary operations.
+The substrate represents distinguishable state-bearing items and relations between them. It does not represent biological categories and exposes no privileged domain operation. There are no built-in organisms, cells, genes, species, genomes, membranes, metabolisms, reproduction cycles, fitness values or evolutionary operations.
 
 Analysis may infer categories from observations. Such categories MUST remain outside substrate identity, state and transition rules unless a separately versioned experiment deliberately introduces a neutral label as ordinary data.
 
