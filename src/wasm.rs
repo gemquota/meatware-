@@ -134,33 +134,6 @@ impl World {
             .map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
         let count = proposals.len();
         if count > 0 {
-            // Relations have finite persistence: their influence decays gradually.
-            // Once too weak, they retire through the same ordinary event-log path.
-            for relation in self.state.relations.values() {
-                let old_weight = number(&relation.properties, "weight").clamp(0.0, 1.0);
-                let next_weight = (old_weight - 0.00008).max(0.0);
-                let mut edits = Vec::new();
-                if next_weight <= 0.025 {
-                    edits.push(Edit::RetireRelation { id: relation.id });
-                } else {
-                    edits.push(Edit::SetRelationProperty {
-                        id: relation.id,
-                        key: "weight".into(),
-                        value: Value::Float(next_weight),
-                    });
-                }
-                proposals.push(Proposal {
-                    key: relation.id,
-                    source_boundary: boundary,
-                    reads: vec![ReadDependency::RelationProperty {
-                        id: relation.id,
-                        key: "weight".into(),
-                        expected: relation.properties.get("weight").cloned(),
-                    }],
-                    edits,
-                });
-            }
-
             let mut all_proposals = proposals;
             // Links strengthen under continued proximity and weaken under separation.
             // Weak links retire through the ordinary, replayable transition contract.
@@ -264,7 +237,7 @@ impl World {
             out.push(number(&a.properties, "y"));
             out.push(number(&b.properties, "x"));
             out.push(number(&b.properties, "y"));
-            out.push(number(&relation.properties, "weight"));
+            out.push(number(&relation.properties, "strength"));
         }
         out
     }
