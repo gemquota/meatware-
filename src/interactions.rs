@@ -281,7 +281,7 @@ mod tests {
     #[test]
     fn only_eligible_combinations_reach_the_evaluator() {
         fn exclude_first_pair(_source: &Configuration, participants: &[Endpoint]) -> bool {
-            participants != [Endpoint::Entity(1), Endpoint::Entity(2)]
+            !(participants.len() == 2 && participants[0] == Endpoint::Entity(1) && participants[1] == Endpoint::Entity(2))
         }
         let state = source();
         let rule = InteractionRule::entities(7, 1, 2, 10, emit_relation)
