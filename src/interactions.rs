@@ -8,6 +8,7 @@ use crate::{
     Configuration, Edit, Endpoint, Proposal, RandomStream, RuntimeError,
 };
 use std::collections::BTreeSet;
+use serde::{Deserialize, Serialize};
 
 pub type RuleEvaluator = fn(
     source: &Configuration,
@@ -32,6 +33,16 @@ impl From<RuntimeError> for InteractionError {
 /// `max_evaluations` is an explicit computational budget. Candidates are drawn
 /// from the selected domain in stable identity order. Each combination is evaluated
 /// at most once per rule and source boundary.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct InteractionRuleDescriptor {
+    pub key: u64,
+    pub version: u32,
+    pub arity: usize,
+    pub max_evaluations: usize,
+    pub include_entities: bool,
+    pub include_relations: bool,
+}
+
 #[derive(Clone, Copy)]
 pub struct InteractionRule {
     pub key: u64,
@@ -44,6 +55,19 @@ pub struct InteractionRule {
 }
 
 impl InteractionRule {
+    /// Returns the portable configuration metadata for this executable rule.
+    /// The evaluator implementation itself is identified by the build and rule version.
+    pub fn descriptor(&self) -> InteractionRuleDescriptor {
+        InteractionRuleDescriptor {
+            key: self.key,
+            version: self.version,
+            arity: self.arity,
+            max_evaluations: self.max_evaluations,
+            include_entities: self.include_entities,
+            include_relations: self.include_relations,
+        }
+    }
+
     pub fn entities(
         key: u64,
         version: u32,
@@ -245,6 +269,15 @@ mod tests {
         let state = source();
         let rule = InteractionRule::entities(7, 1, 2, 2, emit_relation);
         assert_eq!(evaluate_interactions(&state, 42, &[rule]).unwrap().len(), 2);
+    }
+
+    #[test]
+    fn rule_descriptor_round_trips_as_portable_metadata() {
+        let rule = InteractionRule::entities(19, 3, 2, 500, emit_relation);
+        let descriptor = rule.descriptor();
+        let encoded = serde_json::to_vec(&descriptor).unwrap();
+        let decoded: InteractionRuleDescriptor = serde_json::from_slice(&encoded).unwrap();
+        assert_eq!(decoded, descriptor);
     }
 
     #[test]
