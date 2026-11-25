@@ -4,7 +4,7 @@ use crate::run_manifest::RunManifest;
 use crate::{Configuration, ConflictPolicy, Edit, Endpoint, Entity, Properties, Proposal, RandomStream, ReadDependency, Value};
 use wasm_bindgen::prelude::*;
 
-fn relation_eligible(source: &Configuration, participants: &[Endpoint]) -> bool {
+fn relation_eligible(source: &Configuration, participants: &[Endpoint], parameters: &Properties) -> bool {
     if participants.len() != 2 { return false; }
     let (a, b) = match (&participants[0], &participants[1]) {
         (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
@@ -17,7 +17,8 @@ fn relation_eligible(source: &Configuration, participants: &[Endpoint]) -> bool 
     let mut dy = number(&pb.properties, "y") - number(&pa.properties, "y");
     if dx > 0.5 { dx -= 1.0; } else if dx < -0.5 { dx += 1.0; }
     if dy > 0.5 { dy -= 1.0; } else if dy < -0.5 { dy += 1.0; }
-    dx * dx + dy * dy < 0.055_f64.powi(2)
+    let radius = match parameters.get("radius") { Some(Value::Float(v)) => *v, _ => 0.055 };
+    dx * dx + dy * dy < radius.powi(2)
 }
 
 fn create_relation_proposal(
@@ -110,14 +111,18 @@ impl World {
 
     /// Form generic relationships between entities within the fixed experimental radius.
     /// All candidate pairs are evaluated from one immutable source boundary.
-    pub fn form_relations(&mut self) -> Result<u32, JsValue> {
+    pub fn form_relations(&mut self, radius: f64) -> Result<u32, JsValue> {
         let rule = InteractionRule::entities(
             0x4d45_4154,
             1,
             2,
             125_000,
             create_relation_proposal,
-        ).with_eligibility(relation_eligible);
+        ).with_eligibility(relation_eligible).with_parameters({
+            let mut parameters = Properties::new();
+            parameters.insert("radius".into(), Value::Float(radius.clamp(0.005, 0.25)));
+            parameters
+        });
         let proposals = evaluate_interactions(&self.state, self.seed as u64, &[rule])
             .map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
         let count = proposals.len();
