@@ -208,6 +208,7 @@ mod tests {
         let bad = Proposal {
             key: 1,
             source_boundary: 0,
+            reads: Vec::new(),
             edits: vec![Edit::SetEntityProperty {
                 id: 99, key: "missing".into(), value: Value::Bool(true),
             }],
