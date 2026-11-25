@@ -68,6 +68,8 @@ Phases are sequential gates, not calendar promises. Estimates are deferred until
 
 ## Phase 3 — Deterministic reference runtime
 
+**Status: In progress.** C++ and Rust candidate implementations pass the initial semantic parity workload; repeated controlled measurements and the actual reference runtime remain outstanding.
+
 **Goal:** Build a deliberately simple, trustworthy executable baseline.
 
 **Work**
