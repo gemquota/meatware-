@@ -193,11 +193,12 @@ impl World {
             let r = root(&mut parent, i);
             *sizes.entry(r).or_default() += 1;
         }
-        let components = sizes.len();
-        let largest = sizes.values().copied().max().unwrap_or(0);
+        let clusters: Vec<usize> = sizes.values().copied().filter(|size| *size > 1).collect();
+        let cluster_count = clusters.len();
+        let largest = clusters.iter().copied().max().unwrap_or(0);
         let mean_degree = degree.iter().sum::<usize>() as f64 / ids.len().max(1) as f64;
         let mean_strength = if edge_count > 0 { strength_sum / edge_count as f64 } else { 0.0 };
-        vec![components as f64, largest as f64, mean_degree, mean_strength]
+        vec![cluster_count as f64, largest as f64, mean_degree, mean_strength]
     }
 
     pub fn relation_strengths(&self) -> Vec<f64> {
