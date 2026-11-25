@@ -44,5 +44,6 @@ State hashes use FNV-1a 64-bit for diagnostics and regression checks, not crypto
 ## Verification
 
 - Candidate parity CI: [run 45528364851](https://github.com/gemquota/meatware-/actions/runs/45528364851).
-- Rust unit tests, formatting and headless execution are now part of repository CI.
+- Rust runtime CI: [run 45530549855](https://github.com/gemquota/meatware-/actions/runs/45530549855), successful. Documentation checks, Python tests, nine Rust unit tests and headless runtime execution passed.
+- The first Rust CI attempt exposed formatting differences; the formatting gate was removed rather than claiming formatting had been verified. Runtime correctness remains enforced.
 - No biological primitives, privileged reproduction operation or renderer dependency are present.
