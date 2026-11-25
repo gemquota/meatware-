@@ -46,7 +46,7 @@ impl Default for Configuration {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RuntimeError {
     DuplicateId(Id), UnknownEntity(Id), UnknownRelation(Id), InvalidEndpoint(Endpoint),
-    NonFiniteFloat, EmptyRelationEndpoints, DuplicateProposalKey(u64), ConflictingWrite(String),
+    NonFiniteFloat, EmptyRelationEndpoints, DuplicateProposalKey(u64), ConflictingWrite(String), ReadDependencyFailed(String),
     RetireWriteConflict(Id), BoundaryMismatch { expected: u64, actual: u64 },
     InvalidPropertyKey, InvalidSnapshot(String),
 }
@@ -64,7 +64,14 @@ pub enum Edit {
     RetireEntity { id: Id }, RetireRelation { id: Id },
 }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Proposal { pub key: u64, pub source_boundary: u64, pub edits: Vec<Edit> }
+pub enum ReadDependency {
+ EntityExists { id: Id, expected: bool }, RelationExists { id: Id, expected: bool },
+ EntityProperty { id: Id, key: String, expected: Option<Value> }, RelationProperty { id: Id, key: String, expected: Option<Value> },
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ConflictPolicy { #[default] Reject, LowestProposalKeyWins, HighestProposalKeyWins }
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Proposal { pub key: u64, pub source_boundary: u64, pub reads: Vec<ReadDependency>, pub edits: Vec<Edit> }
 
 impl Configuration {
     pub fn allocate_id(&mut self) -> Result<Id, RuntimeError> {
@@ -127,19 +134,30 @@ impl Configuration {
         }
         Ok(())
     }
+    fn check_read(&self, dependency: &ReadDependency) -> Result<(), RuntimeError> {
+        let valid = match dependency {
+            ReadDependency::EntityExists { id, expected } => self.entities.contains_key(id) == *expected,
+            ReadDependency::RelationExists { id, expected } => self.relations.contains_key(id) == *expected,
+            ReadDependency::EntityProperty { id, key, expected } => self.entities.get(id).and_then(|e| e.properties.get(key)) == expected.as_ref(),
+            ReadDependency::RelationProperty { id, key, expected } => self.relations.get(id).and_then(|r| r.properties.get(key)) == expected.as_ref(),
+        };
+        if valid { Ok(()) } else { Err(RuntimeError::ReadDependencyFailed(format!("{dependency:?}"))) }
+    }
     fn validate_endpoint(&self, endpoint: &Endpoint) -> Result<(), RuntimeError> {
         let exists = match endpoint { Endpoint::Entity(id) => self.entities.contains_key(id), Endpoint::Relation(id) => self.relations.contains_key(id) };
         if exists { Ok(()) } else { Err(RuntimeError::InvalidEndpoint(endpoint.clone())) }
     }
-    /// Evaluates against a clone and publishes only after complete validation.
-    /// Conflicting property writes reject the entire batch; no implicit last-write-wins.
     pub fn apply_batch(&mut self, proposals: &[Proposal]) -> Result<(), RuntimeError> {
+        self.apply_batch_with_policy(proposals, ConflictPolicy::Reject)
+    }
+    pub fn apply_batch_with_policy(&mut self, proposals: &[Proposal], policy: ConflictPolicy) -> Result<(), RuntimeError> {
         let mut ordered = proposals.to_vec(); ordered.sort_by_key(|p| p.key);
         let mut seen_keys = BTreeSet::new(); let mut writes = BTreeSet::new();
         let mut retires = BTreeSet::new(); let mut edited = BTreeSet::new();
         for p in &ordered {
             if p.source_boundary != self.boundary { return Err(RuntimeError::BoundaryMismatch { expected: self.boundary, actual: p.source_boundary }); }
             if !seen_keys.insert(p.key) { return Err(RuntimeError::DuplicateProposalKey(p.key)); }
+            for dependency in &p.reads { self.check_read(dependency)?; }
             for e in &p.edits {
                 match e {
                     Edit::SetEntityProperty{id,key,..}|Edit::RemoveEntityProperty{id,key} => {
@@ -154,8 +172,35 @@ impl Configuration {
             }
         }
         for id in &retires { if edited.contains(id) { return Err(RuntimeError::RetireWriteConflict(*id)); } }
+        let mut owners: BTreeMap<String, Vec<u64>> = BTreeMap::new();
+        for p in &ordered {
+            let mut local = BTreeSet::new();
+            for e in &p.edits {
+                let key = match e {
+                    Edit::SetEntityProperty{id,key,..}|Edit::RemoveEntityProperty{id,key} => Some(format!("e:{id}:{key}")),
+                    Edit::SetRelationProperty{id,key,..}|Edit::RemoveRelationProperty{id,key} => Some(format!("r:{id}:{key}")),
+                    _ => None,
+                };
+                if let Some(key) = key { if !local.insert(key.clone()) { return Err(RuntimeError::ConflictingWrite(key)); } owners.entry(key).or_default().push(p.key); }
+            }
+        }
+        let mut winners = BTreeMap::new();
+        for (key, keys) in owners {
+            let winner = if keys.len() == 1 { keys[0] } else { match policy {
+                ConflictPolicy::Reject => return Err(RuntimeError::ConflictingWrite(key)),
+                ConflictPolicy::LowestProposalKeyWins => *keys.iter().min().unwrap(),
+                ConflictPolicy::HighestProposalKeyWins => *keys.iter().max().unwrap(),
+            }};
+            winners.insert(key, winner);
+        }
         let mut candidate=self.clone(); let mut created=BTreeSet::new();
         for p in &ordered { for e in &p.edits {
+            let write_key = match e {
+                Edit::SetEntityProperty{id,key,..}|Edit::RemoveEntityProperty{id,key} => Some(format!("e:{id}:{key}")),
+                Edit::SetRelationProperty{id,key,..}|Edit::RemoveRelationProperty{id,key} => Some(format!("r:{id}:{key}")),
+                _ => None,
+            };
+            if let Some(key) = write_key { if winners.get(&key) != Some(&p.key) { continue; } }
             match e {
                 Edit::CreateEntity{id,properties} => {
                     ensure_fresh(&candidate,*id,&mut created)?; validate_properties(properties)?;
@@ -214,7 +259,7 @@ impl RandomStream{
 #[cfg(test)]
 mod tests{
  use super::*;
- fn p(key:u64,edits:Vec<Edit>)->Proposal{Proposal{key,source_boundary:0,edits}}
+ fn p(key:u64,edits:Vec<Edit>)->Proposal{Proposal{key,source_boundary:0,reads:Vec::new(),edits}}
  #[test]fn independent_edits_commit(){let mut s=Configuration::default();for id in 1..=2{s.entities.insert(id,Entity{id,properties:Properties::new()});}s.next_id=3;
  s.apply_batch(&[p(2,vec![Edit::SetEntityProperty{id:2,key:"x".into(),value:Value::Integer(2)}]),p(1,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(1)}])]).unwrap();
  assert_eq!(s.boundary,1);assert_eq!(s.entities[&1].properties["x"],Value::Integer(1));}
@@ -229,6 +274,19 @@ mod tests{
  assert!(matches!(s.apply_batch(&[p(1,vec![Edit::RetireEntity{id:1}])]),Err(RuntimeError::InvalidEndpoint(_))));assert_eq!(s.state_hash().unwrap(),before);}
  #[test]fn snapshot_round_trip(){let mut s=Configuration::default();s.entities.insert(7,Entity{id:7,properties:[("v".into(),Value::Float(1.25))].into_iter().collect()});let b=s.snapshot().unwrap();let t=Configuration::from_snapshot(&b).unwrap();assert_eq!(s.state_hash().unwrap(),t.state_hash().unwrap());}
  #[test]fn random_stream_is_reproducible(){let mut a=RandomStream::new(42,9);let mut b=RandomStream::new(42,9);assert_eq!((0..20).map(|_|a.next_u64()).collect::<Vec<_>>(),(0..20).map(|_|b.next_u64()).collect::<Vec<_>>());}
+ #[test]fn read_dependency_rejects_stale_observation_atomically(){
+ let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:[("x".into(),Value::Integer(1))].into_iter().collect()});let before=s.state_hash().unwrap();
+ let mut q=p(1,vec![Edit::SetEntityProperty{id:1,key:"y".into(),value:Value::Bool(true)}]);q.reads.push(ReadDependency::EntityProperty{id:1,key:"x".into(),expected:Some(Value::Integer(2))});
+ assert!(matches!(s.apply_batch(&[q]),Err(RuntimeError::ReadDependencyFailed(_))));assert_eq!(s.state_hash().unwrap(),before);
+ }
+ #[test]fn explicit_conflict_policy_uses_stable_proposal_key(){
+ let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:Properties::new()});let a=p(9,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(9)}]);let b=p(2,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(2)}]);
+ s.apply_batch_with_policy(&[a,b],ConflictPolicy::LowestProposalKeyWins).unwrap();assert_eq!(s.entities[&1].properties["x"],Value::Integer(2));
+ }
+ #[test]fn default_conflict_policy_still_rejects(){
+ let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:Properties::new()});let a=p(9,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(9)}]);let b=p(2,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(2)}]);
+ assert!(matches!(s.apply_batch(&[a,b]),Err(RuntimeError::ConflictingWrite(_))));
+ }
  #[test]fn failed_batch_does_not_advance(){let mut s=Configuration::default();assert!(s.apply_batch(&[p(1,vec![Edit::SetEntityProperty{id:99,key:"x".into(),value:Value::Bool(true)}])]).is_err());assert_eq!(s.boundary,0);}
  #[test]fn versioned_snapshot_has_envelope(){let s=Configuration::default();let bytes=s.snapshot().unwrap();let v:serde_json::Value=serde_json::from_slice(&bytes).unwrap();assert_eq!(v["format"],"meatware-snapshot");assert_eq!(v["schema_version"],1);}
  #[test]fn legacy_unwrapped_snapshot_still_loads(){let s=Configuration::default();let bytes=serde_json::to_vec(&s).unwrap();let loaded=Configuration::from_snapshot(&bytes).unwrap();assert_eq!(s.state_hash().unwrap(),loaded.state_hash().unwrap());}
