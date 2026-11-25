@@ -16,10 +16,20 @@ The substrate has no predefined organisms, cells, genes, species, metabolisms or
 - [Pending architecture decisions](docs/DECISIONS_PENDING.md)
 - [Phase 1 record](docs/PHASE_1.md)
 - [Phase 2 record](docs/PHASE_2.md)
+- [Phase 3 record](docs/PHASE_3.md)
 
 ## Current status
 
-**Phase 2 complete. Phase 3 in progress:** the logical substrate and transition contracts are versioned. C++ and Rust candidate implementations now pass the same graph/update workload with matching checksums. Language and physical storage layout remain open pending repeated, controlled benchmarks.
+**Phase 2 complete. Phase 3 in progress:** Rust is selected for the reference runtime. The first executable crate implements generic entities, state-bearing recursive relations, atomic proposal batches, explicit random streams, snapshots and deterministic state hashes. Runtime conformance tests are being expanded.
+
+## Run the reference runtime
+
+Requires Rust stable and Cargo:
+
+```sh
+cargo test
+cargo run --release
+```
 
 ## Central research question
 
