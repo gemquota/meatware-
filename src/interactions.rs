@@ -228,7 +228,7 @@ fn stable_proposal_key(rule_key: u64, version: u32, participants: &[Endpoint]) -
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Properties, Value};
+    use crate::{Edit, Properties, Value};
 
     fn emit_relation(
         _source: &Configuration,
