@@ -268,6 +268,18 @@ mod tests {
     }
 
     #[test]
+    fn fixed_arity_rules_support_multi_party_combinations() {
+        let state = source();
+        let rule = InteractionRule::entities(8, 1, 3, 10, emit_relation);
+        let proposals = evaluate_interactions(&state, 9, &[rule]).unwrap();
+        assert_eq!(proposals.len(), 1);
+        match &proposals[0].edits[0] {
+            Edit::CreateRelation { endpoints, .. } => assert_eq!(endpoints.len(), 3),
+            other => panic!("unexpected edit: {other:?}"),
+        }
+    }
+
+    #[test]
     fn evaluation_is_reproducible_and_does_not_mutate_source() {
         let state = source();
         let before = state.state_hash().unwrap();
