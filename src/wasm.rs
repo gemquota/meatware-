@@ -173,6 +173,8 @@ impl World {
         let index: std::collections::BTreeMap<u64, usize> =
             ids.iter().enumerate().map(|(i, id)| (*id, i)).collect();
         let mut degree = vec![0usize; ids.len()];
+        let mut strength_sum = 0.0;
+        let mut edge_count = 0usize;
         for relation in self.state.relations.values() {
             if relation.endpoints.len() != 2 { continue; }
             let (Endpoint::Entity(a), Endpoint::Entity(b)) =
@@ -180,6 +182,8 @@ impl World {
             let (Some(&i), Some(&j)) = (index.get(a), index.get(b)) else { continue; };
             degree[i] += 1;
             degree[j] += 1;
+            strength_sum += number(&relation.properties, "strength");
+            edge_count += 1;
             let ri = root(&mut parent, i);
             let rj = root(&mut parent, j);
             if ri != rj { parent[rj] = ri; }
@@ -192,7 +196,8 @@ impl World {
         let components = sizes.len();
         let largest = sizes.values().copied().max().unwrap_or(0);
         let mean_degree = degree.iter().sum::<usize>() as f64 / ids.len().max(1) as f64;
-        vec![components as f64, largest as f64, mean_degree, self.state.relations.len() as f64]
+        let mean_strength = if edge_count > 0 { strength_sum / edge_count as f64 } else { 0.0 };
+        vec![components as f64, largest as f64, mean_degree, mean_strength]
     }
 
     pub fn relation_strengths(&self) -> Vec<f64> {
