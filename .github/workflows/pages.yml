@@ -34,6 +34,8 @@ jobs:
         uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: latest
+      - name: Stamp browser build provenance
+        run: echo 'export const BUILD_SHA = "${GITHUB_SHA}";' > site/build-info.js
       - name: Build browser runtime
         run: wasm-pack build --target web --release --out-dir site/pkg
       - name: Configure GitHub Pages
