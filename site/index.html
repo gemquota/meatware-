@@ -41,6 +41,7 @@
 <footer><span>MEATWARE · Experimental substrate</span><span>Emergence is a hypothesis to test, not a feature to fake.</span></footer>
 <script type="module">
 import init, { World } from "./pkg/meatware.js";
+import { BUILD_SHA } from "./build-info.js";
 const $=id=>document.getElementById(id);
 const canvas=$("world"),ctx=canvas.getContext("2d");
 let world=null,running=false,raf=0,seed=17,ticks=0,frame=0;
@@ -56,7 +57,7 @@ function loop(){if(!running)return;world.step(1);ticks+=1;frame++;if(frame%2===0
 function start(){if(running){stop();return}running=true;$("run").textContent="Pause";$("status").textContent="● RUNNING";loop()}
 $("run").addEventListener("click",start);$("step").addEventListener("click",()=>{stop();world.step(10);ticks+=10;update();draw()});$("reset").addEventListener("click",()=>{stop();makeWorld()});
 $("replay").addEventListener("click",()=>{stop();makeWorld();world.step(100);ticks=100;update();draw();$("status").textContent="● REPLAY COMPLETE"});
-$("export").addEventListener("click",()=>{const p=params(),manifest={format:"meatware-run-manifest",schema_version:1,runtime:"meatware-wasm-0.1.0",model:"two-channel-local-exchange",seed:p.seed,initial_entities:p.count,parameters:{coupling:p.coupling,noise:p.noise,interaction_radius:p.radius},transitions:world.tick(),state_hash:world.state_hash(),determinism:"same build, seed and execution path"};const blob=new Blob([JSON.stringify(manifest,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="meatware-run.json";a.click();URL.revokeObjectURL(url)});
+$("export").addEventListener("click",()=>{const p=params(),manifest={format:"meatware-run-manifest",schema_version:1,runtime:"meatware-wasm-0.1.0",build_commit:BUILD_SHA,model:"two-channel-local-exchange-v1",random_generator:"splitmix64-v1",seed:p.seed,initial_entities:p.count,parameters:{coupling:p.coupling,noise:p.noise,interaction_radius:p.radius},transitions:world.tick(),state_hash:world.state_hash(),determinism:"same build, seed and execution path"};const blob=new Blob([JSON.stringify(manifest,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="meatware-run.json";a.click();URL.revokeObjectURL(url)});
 for(const id of ["coupling","noise","radius"]){$(id).addEventListener("input",()=>{applyControls();update()})}
 $("count").addEventListener("input",update);$("seed").addEventListener("change",update);
 await init();makeWorld();window.addEventListener("resize",resize);resize();$("status").textContent="● READY";
