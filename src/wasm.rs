@@ -288,13 +288,19 @@ impl World {
 
             let boundary = self.state.boundary;
             let mut proposals = Vec::with_capacity(n + self.state.relations.len());
+            // Motion controls both force response and the speed envelope. Previously
+            // force was scaled but every setting hit the same hard velocity ceiling,
+            // making the control largely invisible at higher values.
+            let speed_limit = 0.002 + self.motion * 0.004;
             for i in 0..n {
-                let vx = (positions[i].4 * self.damping + fx[i]
-                    + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.009, 0.009);
-                let vy = (positions[i].5 * self.damping + fy[i]
-                    + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.006, 0.006);
+                let vx = positions[i].4 * self.damping + fx[i] * self.motion
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.65;
+                let vy = positions[i].5 * self.damping + fy[i] * self.motion
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.65;
                 let speed = (vx * vx + vy * vy).sqrt();
-                let (vx, vy) = if speed > 0.006 { (vx * 0.006 / speed, vy * 0.006 / speed) } else { (vx, vy) };
+                let (vx, vy) = if speed > speed_limit {
+                    (vx * speed_limit / speed, vy * speed_limit / speed)
+                } else { (vx, vy) };
                 let a = (positions[i].2 + da[i] + (self.random.unit_f64() - 0.5) * self.noise).clamp(0.0, 1.0);
                 let b = (positions[i].3 + db[i] + (self.random.unit_f64() - 0.5) * self.noise).clamp(0.0, 1.0);
                 let x = (positions[i].0 + vx).rem_euclid(1.0);
