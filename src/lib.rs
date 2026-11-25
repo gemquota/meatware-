@@ -71,7 +71,7 @@ pub enum ReadDependency {
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ConflictPolicy { #[default] Reject, LowestProposalKeyWins, HighestProposalKeyWins }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Proposal { pub key: u64, pub source_boundary: u64, pub reads: Vec<ReadDependency>, pub edits: Vec<Edit> }
+pub struct Proposal { pub key: u64, pub source_boundary: u64, #[serde(default)] pub reads: Vec<ReadDependency>, pub edits: Vec<Edit> }
 
 impl Configuration {
     pub fn allocate_id(&mut self) -> Result<Id, RuntimeError> {
@@ -138,8 +138,8 @@ impl Configuration {
         let valid = match dependency {
             ReadDependency::EntityExists { id, expected } => self.entities.contains_key(id) == *expected,
             ReadDependency::RelationExists { id, expected } => self.relations.contains_key(id) == *expected,
-            ReadDependency::EntityProperty { id, key, expected } => self.entities.get(id).and_then(|e| e.properties.get(key)) == expected.as_ref(),
-            ReadDependency::RelationProperty { id, key, expected } => self.relations.get(id).and_then(|r| r.properties.get(key)) == expected.as_ref(),
+            ReadDependency::EntityProperty { id, key, expected } => self.entities.get(id).map(|e| e.properties.get(key)) == Some(expected.as_ref()),
+            ReadDependency::RelationProperty { id, key, expected } => self.relations.get(id).map(|r| r.properties.get(key)) == Some(expected.as_ref()),
         };
         if valid { Ok(()) } else { Err(RuntimeError::ReadDependencyFailed(format!("{dependency:?}"))) }
     }
@@ -278,6 +278,10 @@ mod tests{
  let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:[("x".into(),Value::Integer(1))].into_iter().collect()});let before=s.state_hash().unwrap();
  let mut q=p(1,vec![Edit::SetEntityProperty{id:1,key:"y".into(),value:Value::Bool(true)}]);q.reads.push(ReadDependency::EntityProperty{id:1,key:"x".into(),expected:Some(Value::Integer(2))});
  assert!(matches!(s.apply_batch(&[q]),Err(RuntimeError::ReadDependencyFailed(_))));assert_eq!(s.state_hash().unwrap(),before);
+ }
+ #[test]fn absent_entity_does_not_satisfy_absent_property_read(){
+ let mut s=Configuration::default();let mut q=p(1,vec![]);q.reads.push(ReadDependency::EntityProperty{id:404,key:"x".into(),expected:None});
+ assert!(matches!(s.apply_batch(&[q]),Err(RuntimeError::ReadDependencyFailed(_))));assert_eq!(s.boundary,0);
  }
  #[test]fn explicit_conflict_policy_uses_stable_proposal_key(){
  let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:Properties::new()});let a=p(9,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(9)}]);let b=p(2,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(2)}]);
