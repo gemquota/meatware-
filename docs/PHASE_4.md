@@ -25,6 +25,8 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 - [x] Event-local random stream isolated by seed, boundary, proposal identity and rule channel.
 - [x] Evaluators inspect one immutable source state; no in-place mutation path is exposed.
 - [x] Generated changes use ordinary proposals and the existing atomic transition validator.
+- [x] Relationship endpoint sets can be replaced through atomic edits with source-state endpoint read dependencies.
+- [x] Endpoint replacement participates in write-conflict detection and rejects empty or dangling endpoint sets.
 - [x] Tests for pairwise relation formation, reproducibility, source immutability, evaluation budgets and invalid rule definitions.
 
 ## Important limitations
@@ -42,7 +44,7 @@ The Rust test suite is the authoritative check for this increment. CI must verif
 1. Add explicit rule descriptors and portable configuration/version records.
 2. Add eligibility predicates and indexed local-neighbourhood candidate generation.
 3. Add directed participant ordering and multi-party interaction experiments.
-4. Extend structural edit coverage for relationship endpoint reconfiguration and generic duplication/fusion/fragmentation compositions.
+4. Extend generic duplication/fusion/fragmentation compositions.
 5. Add interaction and proposal outcome traces to the event log.
 6. Add stochastic outcome and scheduler diagnostics, including budget exhaustion.
 7. Build a headless composition experiment using the same scheduler and event log.
