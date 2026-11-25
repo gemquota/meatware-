@@ -12,8 +12,8 @@ Provide the first usable, public, end-to-end experiment surface. This MVP demons
 - Browser interface hosted on GitHub Pages.
 - Configurable initial entity count and random seed.
 - Two continuous scalar state channels per entity.
-- Local, distance-weighted pairwise exchange.
-- Stochastic perturbation.
+- Local, distance-weighted pairwise exchange with stronger channel-dependent attraction and repulsion, a short-range collision-exclusion force, inertial motion and persistent relation tension.
+- Stochastic perturbation applied independently across both spatial axes and both scalar channels.
 - Periodic 2D positions with channel-dependent movement.
 - Pause/run, fixed-step execution, reset and deterministic 100-step replay.
 - Read-only summary metrics and diagnostic state hash.
@@ -47,7 +47,7 @@ wasm-pack build --target web --release --out-dir site/pkg
 python -m http.server 8000 --directory site
 ```
 
-Open http://localhost:8000. A local HTTP server is required because browser module loading does not work from file://. The simulation occupies the full viewport; experiment controls float above the world and can be collapsed or hidden. A separate floating debug console records runtime events and can copy its contents with a tap. Interaction, noise and inertial force responses are tuned for visible motion rather than imperceptible parameter changes.
+Open http://localhost:8000. A local HTTP server is required because browser module loading does not work from file://. The simulation occupies the full viewport; experiment controls float above the world and can be collapsed or hidden. A separate floating debug console records runtime events and can copy its contents with a tap. Interaction, noise, motion and inertia controls apply immediately. The current force model uses stronger state-dependent pair forces, explicit short-range exclusion and persistent relation springs; entity size, glow and directional traces are enlarged to make movement legible at phone scale.
 
 ## MVP exit criteria
 
