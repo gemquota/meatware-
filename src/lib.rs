@@ -85,15 +85,19 @@ impl Configuration {
         state.validate()?; Ok(state)
     }
     pub fn validate(&self) -> Result<(), RuntimeError> {
+        let mut identities = BTreeSet::new();
         for (id, entity) in &self.entities {
-            if *id != entity.id || self.retired.contains(id) { return Err(RuntimeError::DuplicateId(*id)); }
+            if *id != entity.id || !identities.insert(*id) || self.retired.contains(id) { return Err(RuntimeError::DuplicateId(*id)); }
             validate_properties(&entity.properties)?;
         }
         for (id, relation) in &self.relations {
-            if *id != relation.id || self.retired.contains(id) { return Err(RuntimeError::DuplicateId(*id)); }
+            if *id != relation.id || !identities.insert(*id) || self.retired.contains(id) { return Err(RuntimeError::DuplicateId(*id)); }
             if relation.endpoints.is_empty() { return Err(RuntimeError::EmptyRelationEndpoints); }
             validate_properties(&relation.properties)?;
             for endpoint in &relation.endpoints { self.validate_endpoint(endpoint)?; }
+        }
+        for id in &self.retired {
+            if !identities.insert(*id) { return Err(RuntimeError::DuplicateId(*id)); }
         }
         Ok(())
     }
