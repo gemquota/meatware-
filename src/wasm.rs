@@ -190,8 +190,9 @@ impl World {
                     let proximity = 1.0 - d / self.radius.max(0.005);
                     let similarity = ((positions[i].2 - 0.5) * (positions[j].2 - 0.5)
                         + (positions[i].3 - 0.5) * (positions[j].3 - 0.5)) * 8.0;
-                    let exclusion = if d < 0.012 { -(0.012 - d) * 0.035 } else { 0.0 };
-                    let force = (similarity * 0.000085 * proximity + exclusion)
+                    let collision_radius = 0.018;
+                    let exclusion = if d < collision_radius { -(collision_radius - d) * 0.12 } else { 0.0 };
+                    let force = (similarity * 0.0011 * proximity + exclusion)
                         * self.coupling * self.motion;
                     let inv_d = 1.0 / d;
                     let px = dx * inv_d * force;
@@ -225,7 +226,7 @@ impl World {
                     Some(Value::Float(v)) => v.max(0.0).sqrt(),
                     _ => 0.04,
                 };
-                let tension = (d - rest).clamp(-0.15, 0.15) * 0.0007 * self.motion;
+                let tension = (d - rest).clamp(-0.15, 0.15) * 0.0025 * self.motion;
                 let px = dx / d * tension;
                 let py = dy / d * tension;
                 fx[i] += px; fy[i] += py;
@@ -236,11 +237,11 @@ impl World {
             let mut proposals = Vec::with_capacity(n);
             for i in 0..n {
                 let vx = (positions[i].4 * self.damping + fx[i]
-                    + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.006, 0.006);
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.009, 0.009);
                 let vy = (positions[i].5 * self.damping + fy[i]
-                    + (self.random.unit_f64() - 0.5) * self.noise * 0.012).clamp(-0.006, 0.006);
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.006, 0.006);
                 let speed = (vx * vx + vy * vy).sqrt();
-                let (vx, vy) = if speed > 0.004 { (vx * 0.004 / speed, vy * 0.004 / speed) } else { (vx, vy) };
+                let (vx, vy) = if speed > 0.006 { (vx * 0.006 / speed, vy * 0.006 / speed) } else { (vx, vy) };
                 let a = (positions[i].2 + da[i] + (self.random.unit_f64() - 0.5) * self.noise).clamp(0.0, 1.0);
                 let b = (positions[i].3 + db[i] + (self.random.unit_f64() - 0.5) * self.noise).clamp(0.0, 1.0);
                 let x = (positions[i].0 + vx).rem_euclid(1.0);
