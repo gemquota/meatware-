@@ -191,7 +191,7 @@ impl World {
                     let similarity = ((positions[i].2 - 0.5) * (positions[j].2 - 0.5)
                         + (positions[i].3 - 0.5) * (positions[j].3 - 0.5)) * 8.0;
                     let exclusion = if d < 0.012 { -(0.012 - d) * 0.035 } else { 0.0 };
-                    let force = (similarity * 0.000012 * proximity + exclusion)
+                    let force = (similarity * 0.000085 * proximity + exclusion)
                         * self.coupling * self.motion;
                     let inv_d = 1.0 / d;
                     let px = dx * inv_d * force;
@@ -236,7 +236,7 @@ impl World {
             let mut proposals = Vec::with_capacity(n);
             for i in 0..n {
                 let vx = (positions[i].4 * self.damping + fx[i]
-                    + (self.random.unit_f64() - 0.5) * self.noise * 0.012).clamp(-0.006, 0.006);
+                    + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.006, 0.006);
                 let vy = (positions[i].5 * self.damping + fy[i]
                     + (self.random.unit_f64() - 0.5) * self.noise * 0.012).clamp(-0.006, 0.006);
                 let speed = (vx * vx + vy * vy).sqrt();
