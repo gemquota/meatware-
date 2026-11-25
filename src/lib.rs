@@ -63,12 +63,14 @@ pub enum Edit {
     RemoveEntityProperty { id: Id, key: String },
     SetRelationProperty { id: Id, key: String, value: Value },
     RemoveRelationProperty { id: Id, key: String },
+    ReplaceRelationEndpoints { id: Id, endpoints: Vec<Endpoint> },
     RetireEntity { id: Id }, RetireRelation { id: Id },
 }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum ReadDependency {
  EntityExists { id: Id, expected: bool }, RelationExists { id: Id, expected: bool },
  EntityProperty { id: Id, key: String, expected: Option<Value> }, RelationProperty { id: Id, key: String, expected: Option<Value> },
+ RelationEndpoints { id: Id, expected: Vec<Endpoint> },
 }
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ConflictPolicy { #[default] Reject, LowestProposalKeyWins, HighestProposalKeyWins }
@@ -142,6 +144,7 @@ impl Configuration {
             ReadDependency::RelationExists { id, expected } => self.relations.contains_key(id) == *expected,
             ReadDependency::EntityProperty { id, key, expected } => self.entities.get(id).map(|e| e.properties.get(key)) == Some(expected.as_ref()),
             ReadDependency::RelationProperty { id, key, expected } => self.relations.get(id).map(|r| r.properties.get(key)) == Some(expected.as_ref()),
+            ReadDependency::RelationEndpoints { id, expected } => self.relations.get(id).map(|r| &r.endpoints) == Some(expected),
         };
         if valid { Ok(()) } else { Err(RuntimeError::ReadDependencyFailed(format!("{dependency:?}"))) }
     }
@@ -168,6 +171,7 @@ impl Configuration {
                     Edit::SetRelationProperty{id,key,..}|Edit::RemoveRelationProperty{id,key} => {
                         let _ = key; edited.insert(*id);
                     }
+                    Edit::ReplaceRelationEndpoints{id,..} => { edited.insert(*id); }
                     Edit::RetireEntity{id}|Edit::RetireRelation{id} => { retires.insert(*id); }
                     _ => {}
                 }
@@ -181,6 +185,7 @@ impl Configuration {
                 let key = match e {
                     Edit::SetEntityProperty{id,key,..}|Edit::RemoveEntityProperty{id,key} => Some(format!("e:{id}:{key}")),
                     Edit::SetRelationProperty{id,key,..}|Edit::RemoveRelationProperty{id,key} => Some(format!("r:{id}:{key}")),
+                    Edit::ReplaceRelationEndpoints{id,..} => Some(format!("r:{id}:@endpoints")),
                     _ => None,
                 };
                 if let Some(key) = key { if !local.insert(key.clone()) { return Err(RuntimeError::ConflictingWrite(key)); } owners.entry(key).or_default().push(p.key); }
@@ -200,6 +205,7 @@ impl Configuration {
             let write_key = match e {
                 Edit::SetEntityProperty{id,key,..}|Edit::RemoveEntityProperty{id,key} => Some(format!("e:{id}:{key}")),
                 Edit::SetRelationProperty{id,key,..}|Edit::RemoveRelationProperty{id,key} => Some(format!("r:{id}:{key}")),
+                Edit::ReplaceRelationEndpoints{id,..} => Some(format!("r:{id}:@endpoints")),
                 _ => None,
             };
             if let Some(key) = write_key { if winners.get(&key) != Some(&p.key) { continue; } }
@@ -227,6 +233,10 @@ impl Configuration {
                 }
                 Edit::RemoveRelationProperty{id,key} => {
                     candidate.relations.get_mut(id).ok_or(RuntimeError::UnknownRelation(*id))?.properties.remove(&valid_key(key)?);
+                }
+                Edit::ReplaceRelationEndpoints{id,endpoints} => {
+                    if endpoints.is_empty() { return Err(RuntimeError::EmptyRelationEndpoints); }
+                    candidate.relations.get_mut(id).ok_or(RuntimeError::UnknownRelation(*id))?.endpoints = endpoints.clone();
                 }
                 Edit::RetireEntity{id} => { candidate.entities.remove(id).ok_or(RuntimeError::UnknownEntity(*id))?; candidate.retired.insert(*id); }
                 Edit::RetireRelation{id} => { candidate.relations.remove(id).ok_or(RuntimeError::UnknownRelation(*id))?; candidate.retired.insert(*id); }
@@ -283,6 +293,26 @@ mod tests{
  #[test]fn conflicts_reject_without_mutation(){let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:Properties::new()});let before=s.state_hash().unwrap();
  let r=s.apply_batch(&[p(1,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(1)}]),p(2,vec![Edit::SetEntityProperty{id:1,key:"x".into(),value:Value::Integer(2)}])]);
  assert!(matches!(r,Err(RuntimeError::ConflictingWrite(_))));assert_eq!(s.state_hash().unwrap(),before);}
+ #[test]fn relation_endpoints_can_be_reconfigured_atomically(){
+ let mut s=Configuration::default();
+ for id in 1..=3{s.entities.insert(id,Entity{id,properties:Properties::new()});}
+ s.relations.insert(4,Relation{id:4,kind:"link".into(),endpoints:vec![Endpoint::Entity(1),Endpoint::Entity(2)],properties:Properties::new()});
+ let mut q=p(1,vec![Edit::ReplaceRelationEndpoints{id:4,endpoints:vec![Endpoint::Entity(2),Endpoint::Entity(3)]}]);
+ q.reads.push(ReadDependency::RelationEndpoints{id:4,expected:vec![Endpoint::Entity(1),Endpoint::Entity(2)]});
+ s.apply_batch(&[q]).unwrap();
+ assert_eq!(s.relations[&4].endpoints,vec![Endpoint::Entity(2),Endpoint::Entity(3)]);
+ }
+ #[test]fn stale_relation_endpoint_read_rejects_atomically(){
+ let mut s=Configuration::default();
+ s.entities.insert(1,Entity{id:1,properties:Properties::new()});
+ s.entities.insert(2,Entity{id:2,properties:Properties::new()});
+ s.relations.insert(3,Relation{id:3,kind:"link".into(),endpoints:vec![Endpoint::Entity(1)],properties:Properties::new()});
+ let before=s.state_hash().unwrap();
+ let mut q=p(1,vec![Edit::SetRelationProperty{id:3,key:"changed".into(),value:Value::Bool(true)}]);
+ q.reads.push(ReadDependency::RelationEndpoints{id:3,expected:vec![Endpoint::Entity(2)]});
+ assert!(matches!(s.apply_batch(&[q]),Err(RuntimeError::ReadDependencyFailed(_))));
+ assert_eq!(s.state_hash().unwrap(),before);
+ }
  #[test]fn relation_can_reference_relation(){let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:Properties::new()});
  s.relations.insert(2,Relation{id:2,kind:"link".into(),endpoints:vec![Endpoint::Entity(1)],properties:Properties::new()});
  s.relations.insert(3,Relation{id:3,kind:"bundle".into(),endpoints:vec![Endpoint::Relation(2)],properties:Properties::new()});assert!(s.validate().is_ok());}
