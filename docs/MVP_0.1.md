@@ -15,7 +15,7 @@ Provide the first usable, public, end-to-end experiment surface. This MVP demons
 - Local, distance-weighted pairwise exchange.
 - Stochastic perturbation.
 - Periodic 2D positions with channel-dependent movement.
-- Pause/run, fixed-step execution, reset and deterministic 500-step replay.
+- Pause/run, fixed-step execution, reset and deterministic 100-step replay.
 - Read-only summary metrics and diagnostic state hash.
 - Exportable JSON run manifest recording seed, model, parameters, transition count, runtime version and state hash.
 - CI validation of native Rust and browser WebAssembly builds.
@@ -24,13 +24,13 @@ Provide the first usable, public, end-to-end experiment surface. This MVP demons
 
 Each abstract entity has an identity implicit in its stable vector position, a 2D coordinate and two scalar state values in [0, 1]. The world is periodic in both spatial dimensions. For each transition, every pair within the configured interaction radius exchanges a fraction of the difference between each scalar channel. The exchange weight decreases linearly with squared distance. Independent pseudorandom perturbations are applied to both channels. The resulting channel values influence small positional displacements. There is no creation, retirement, duplication, fusion, fitness, lineage, environmental resource field or reproduction mechanism in this MVP.
 
-This is intentionally a narrow dynamics testbed, not a substitute for the complete specification. The initial implementation uses an O(n²) pair scan and caps the initial population at 2,000. The browser UI exposes a lower range for responsiveness.
+This is intentionally a narrow dynamics testbed, not a substitute for the complete specification. The initial implementation uses an O(n²) pair scan and caps the initial population at 2,000. The browser UI caps the population at 500 to keep the quadratic pair scan practical on mobile devices.
 
 ## Reproducibility scope
 
 The random stream is deterministic for the same compiled runtime, seed and execution path. The exported manifest is a record of run conditions and a terminal state hash; it is not yet a complete replay log. Cross-version, cross-browser and cross-architecture bitwise reproducibility are not claimed. The hash is a diagnostic checksum, not a cryptographic integrity mechanism.
 
-The replay control reconstructs the initial state from the displayed seed and settings and runs exactly 500 transitions. Changing parameters after a run changes the live model settings; reset is required to apply a new initial population or seed.
+The replay control reconstructs the initial state from the displayed seed and settings and runs exactly 100 transitions. Changing parameters after a run changes the live model settings; reset is required to apply a new initial population or seed.
 
 ## Run locally
 
