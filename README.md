@@ -19,7 +19,7 @@ The substrate has no predefined organisms, cells, genes, species, metabolisms or
 
 ## Current status
 
-**Phase 2 complete:** logical substrate semantics and transition contracts are defined and versioned. Phase 3 will implement a small deterministic reference runtime against these contracts. Language and physical storage layout remain open until representative workloads can be compared.
+**Phase 2 complete. Phase 3 in progress:** the logical substrate and transition contracts are versioned. C++ and Rust candidate implementations now pass the same graph/update workload with matching checksums. Language and physical storage layout remain open pending repeated, controlled benchmarks.
 
 ## Central research question
 
