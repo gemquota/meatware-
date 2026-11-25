@@ -283,7 +283,7 @@ impl World {
                     (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
                     _ => continue,
                 };
-                let (Some(i), Some(j)) = (ids.iter().position(|id| *id == a), ids.iter().position(|id| *id == b)) else { continue; };
+                let (Some(&i), Some(&j)) = (index_by_id.get(&a), index_by_id.get(&b)) else { continue; };
                 let mut dx = positions[j].0 - positions[i].0;
                 let mut dy = positions[j].1 - positions[i].1;
                 if dx > 0.5 { dx -= 1.0; } else if dx < -0.5 { dx += 1.0; }
