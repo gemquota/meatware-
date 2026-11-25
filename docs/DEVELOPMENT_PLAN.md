@@ -106,7 +106,7 @@ Phases are sequential gates, not calendar promises. Estimates are deferred until
 7. [x] Add serializable rule descriptors with explicit version metadata.
 8. [ ] Decide whether portable declarative evaluator definitions are necessary.
 9. [ ] Add interaction and proposal outcome traces.
-10. [ ] Build controlled composition experiments without seeded structures.
+10. [x] Add a browser composition probe that creates generic persistent relations without seeded relationships. [ ] Build controlled multi-run composition experiments without seeded structures.
 
 **Deliverables:** rule/interaction engine, transformation pipeline, relationship lifecycle, stochastic processes, event traces and composition experiments.
 
