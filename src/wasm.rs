@@ -48,8 +48,6 @@ impl World {
             let n = ids.len();
             let mut da = vec![0.0; n];
             let mut db = vec![0.0; n];
-            let mut dxs = vec![0.0; n];
-            let mut dys = vec![0.0; n];
             let positions: Vec<(f64, f64, f64, f64)> = ids.iter().map(|id| {
                 let p = &self.state.entities[id].properties;
                 (number(p, "x"), number(p, "y"), number(p, "a"), number(p, "b"))
@@ -152,8 +150,8 @@ impl World {
     }
 
     pub fn replay_hash(&self) -> Result<String, JsValue> {
-        self.log.replay().and_then(|s| s.state_hash())
-            .map(|h| format!("{h:016x}"))
-            .map_err(|e| JsValue::from_str(&e.to_string()))
+        let replayed = self.log.replay().map_err(|e| JsValue::from_str(&e.to_string()))?;
+        let hash = replayed.state_hash().map_err(|e| JsValue::from_str(&e.to_string()))?;
+        Ok(format!("{hash:016x}"))
     }
 }
