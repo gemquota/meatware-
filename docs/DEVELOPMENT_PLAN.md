@@ -92,13 +92,13 @@ Phases are sequential gates, not calendar promises. Estimates are deferred until
 
 ## Phase 4 — General interaction and transformation system
 
-**Status: In progress.** The first deterministic scheduler now enumerates bounded participant combinations and emits ordinary proposals using rule-isolated random streams. Eligibility queries, spatial neighbourhoods, structural edit coverage and outcome traces remain open.
+**Status: In progress.** The first deterministic scheduler now enumerates bounded participant combinations and emits ordinary proposals using rule-isolated random streams. Indexed spatial neighbourhoods, broader structural edit coverage and outcome traces remain open.
 
 **Goal:** Let novel configurations form through general rules rather than privileged biological operations.
 
 **Work**
 1. [x] Implement bounded pairwise and fixed-arity participant enumeration.
-2. [ ] Define interaction eligibility and indexed neighbourhood queries.
+2. [x] Add deterministic participant eligibility predicates. [ ] Add indexed neighbourhood queries.
 3. [x] Implement read-only rule evaluation and proposal generation.
 4. [x] Isolate stochastic streams by rule and participant combination.
 5. [x] Add atomic relationship endpoint reconfiguration and endpoint-set read dependencies.
