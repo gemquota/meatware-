@@ -10,6 +10,8 @@ use crate::{
 use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 
+pub type RuleEligibility = fn(source: &Configuration, participants: &[Endpoint]) -> bool;
+
 pub type RuleEvaluator = fn(
     source: &Configuration,
     participants: &[Endpoint],
@@ -41,6 +43,7 @@ pub struct InteractionRuleDescriptor {
     pub max_evaluations: usize,
     pub include_entities: bool,
     pub include_relations: bool,
+    pub has_eligibility: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -51,6 +54,7 @@ pub struct InteractionRule {
     pub max_evaluations: usize,
     pub include_entities: bool,
     pub include_relations: bool,
+    pub eligible: Option<RuleEligibility>,
     pub evaluate: RuleEvaluator,
 }
 
@@ -65,6 +69,7 @@ impl InteractionRule {
             max_evaluations: self.max_evaluations,
             include_entities: self.include_entities,
             include_relations: self.include_relations,
+            has_eligibility: self.eligible.is_some(),
         }
     }
 
@@ -75,7 +80,13 @@ impl InteractionRule {
         max_evaluations: usize,
         evaluate: RuleEvaluator,
     ) -> Self {
-        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: false, evaluate }
+        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: false, eligible: None, evaluate }
+    }
+
+    /// Restricts which stable participant combinations reach the evaluator.
+    pub fn with_eligibility(mut self, eligible: RuleEligibility) -> Self {
+        self.eligible = Some(eligible);
+        self
     }
 
     pub fn all(
@@ -85,7 +96,7 @@ impl InteractionRule {
         max_evaluations: usize,
         evaluate: RuleEvaluator,
     ) -> Self {
-        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: true, evaluate }
+        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: true, eligible: None, evaluate }
     }
 }
 
@@ -136,6 +147,9 @@ pub fn evaluate_interactions(
         );
 
         for participants in combinations {
+            if let Some(eligible) = rule.eligible {
+                if !eligible(source, &participants) { continue; }
+            }
             let proposal_key = stable_proposal_key(rule.key, rule.version, &participants);
             if !seen_proposals.insert(proposal_key) {
                 return Err(InteractionError::ProposalKeyCollision(proposal_key));
@@ -262,6 +276,19 @@ mod tests {
         let second = evaluate_interactions(&state, 42, &[rule]).unwrap();
         assert_eq!(first, second);
         assert_eq!(state.state_hash().unwrap(), before);
+    }
+
+    #[test]
+    fn only_eligible_combinations_reach_the_evaluator() {
+        fn exclude_first_pair(_source: &Configuration, participants: &[Endpoint]) -> bool {
+            participants != [Endpoint::Entity(1), Endpoint::Entity(2)]
+        }
+        let state = source();
+        let rule = InteractionRule::entities(7, 1, 2, 10, emit_relation)
+            .with_eligibility(exclude_first_pair);
+        let proposals = evaluate_interactions(&state, 42, &[rule]).unwrap();
+        assert_eq!(proposals.len(), 2);
+        assert!(rule.descriptor().has_eligibility);
     }
 
     #[test]
