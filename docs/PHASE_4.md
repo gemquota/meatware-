@@ -22,6 +22,7 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 - [x] Explicit per-rule evaluation budgets.
 - [x] Stable rule ordering and duplicate rule-key rejection.
 - [x] Rule key/version included in deterministic proposal identity.
+- [x] Serializable rule descriptors capture the scheduler parameters and version metadata; executable evaluator identity remains tied to the build.
 - [x] Event-local random stream isolated by seed, boundary, proposal identity and rule channel.
 - [x] Evaluators inspect one immutable source state; no in-place mutation path is exposed.
 - [x] Generated changes use ordinary proposals and the existing atomic transition validator.
@@ -31,7 +32,7 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 
 ## Important limitations
 
-This is a first scheduler, not yet a complete interaction language. Rule evaluators are Rust function pointers, so their executable implementation is versioned by the build and identified by the rule key/version, but rule definitions are not yet a portable declarative file format. Candidate generation currently enumerates combinations over all selected entities and/or relations; spatial neighbourhoods, eligibility predicates, directed permutations and efficient indexed candidate queries remain future work. Each rule has an explicit evaluation cap to prevent accidental combinatorial explosions, but reaching that cap is not currently emitted as a separate diagnostic.
+This is a first scheduler, not yet a complete interaction language. Rule evaluators are Rust function pointers, so their executable implementation is versioned by the build and identified by the rule key/version, but rule descriptors are portable metadata, but evaluator implementations are still compiled Rust functions rather than a portable declarative rule language. Candidate generation currently enumerates combinations over all selected entities and/or relations; spatial neighbourhoods, eligibility predicates, directed permutations and efficient indexed candidate queries remain future work. Each rule has an explicit evaluation cap to prevent accidental combinatorial explosions, but reaching that cap is not currently emitted as a separate diagnostic.
 
 The evaluator returns proposals, not accepted outcomes. Conflicts, invalid edits, stale reads and dangling endpoints are still resolved or rejected by the substrate transition engine. No proposal is evidence of a successful transformation until the transition commits.
 
@@ -41,7 +42,7 @@ The Rust test suite is the authoritative check for this increment. CI must verif
 
 ## Next increments
 
-1. Add explicit rule descriptors and portable configuration/version records.
+1. Add a portable declarative evaluator format only if experiments demonstrate that compiled evaluators are too restrictive.
 2. Add eligibility predicates and indexed local-neighbourhood candidate generation.
 3. Add directed participant ordering and multi-party interaction experiments.
 4. Extend generic duplication/fusion/fragmentation compositions.
