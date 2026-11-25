@@ -18,10 +18,11 @@ The substrate has no predefined organisms, cells, genes, species, metabolisms or
 - [Phase 2 record](docs/PHASE_2.md)
 - [Phase 3 record](docs/PHASE_3.md)
 - [Interactive MVP 0.1](docs/MVP_0.1.md)
+- [Run manifest schema](docs/RUN_MANIFEST.md)
 
 ## Current status
 
-**Interactive MVP 0.1:** The Rust runtime now has a WebAssembly browser build and an interactive abstract-dynamics experiment. The interface supports configurable runs, stepping, replay, metrics, state-hash verification, versioned event-log export and build-stamped manifests. Browser transitions now pass through the general entity/property substrate and append-only proposal event log. This is a narrow dynamics demonstration, not evidence of evolution or adaptation. The general substrate runtime remains under development.
+**Interactive MVP 0.1:** The Rust runtime now has a WebAssembly browser build and an interactive abstract-dynamics experiment. The interface supports configurable runs, stepping, replay, metrics, state-hash verification, versioned event-log export and runtime-generated, schema-versioned run manifests. Browser transitions now pass through the general entity/property substrate and append-only proposal event log. This is a narrow dynamics demonstration, not evidence of evolution or adaptation. The general substrate runtime remains under development.
 
 [Launch the live experiment](https://gemquota.github.io/meatware-/) · [MVP scope and limitations](docs/MVP_0.1.md)
 
