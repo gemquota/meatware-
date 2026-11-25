@@ -1,4 +1,4 @@
-use crate::{Configuration, Proposal, RuntimeError};
+use crate::{Configuration, ConflictPolicy, Proposal, RuntimeError};
 use serde::{Deserialize, Serialize};
 
 pub const SNAPSHOT_SCHEMA_VERSION: u32 = 1;
@@ -18,6 +18,8 @@ pub struct TransitionRecord {
     pub target_boundary: u64,
     pub source_hash: u64,
     pub target_hash: u64,
+    #[serde(default)]
+    pub conflict_policy: ConflictPolicy,
     pub proposals: Vec<Proposal>,
 }
 
@@ -68,6 +70,15 @@ impl EventLog {
         state: &mut Configuration,
         proposals: &[Proposal],
     ) -> Result<&TransitionRecord, EventLogError> {
+        self.append_with_policy(state, proposals, ConflictPolicy::Reject)
+    }
+
+    pub fn append_with_policy(
+        &mut self,
+        state: &mut Configuration,
+        proposals: &[Proposal],
+        conflict_policy: ConflictPolicy,
+    ) -> Result<&TransitionRecord, EventLogError> {
         if self.format != "meatware-event-log" || self.schema_version != EVENT_LOG_SCHEMA_VERSION {
             return Err(EventLogError::InvalidFormat("unsupported event log envelope".into()));
         }
@@ -85,7 +96,7 @@ impl EventLog {
         let source_boundary = state.boundary;
         let source_hash = actual;
         let mut candidate = state.clone();
-        candidate.apply_batch(proposals)?;
+        candidate.apply_batch_with_policy(proposals, conflict_policy)?;
         let target_hash = candidate.state_hash()?;
         let record = TransitionRecord {
             schema_version: EVENT_LOG_SCHEMA_VERSION,
@@ -93,6 +104,7 @@ impl EventLog {
             target_boundary: candidate.boundary,
             source_hash,
             target_hash,
+            conflict_policy,
             proposals: proposals.to_vec(),
         };
         *state = candidate;
@@ -120,7 +132,7 @@ impl EventLog {
                     boundary: state.boundary, expected: record.source_hash, actual: source_hash,
                 });
             }
-            state.apply_batch(&record.proposals)?;
+            state.apply_batch_with_policy(&record.proposals, record.conflict_policy)?;
             if state.boundary != record.target_boundary {
                 return Err(EventLogError::BoundaryMismatch {
                     expected: record.target_boundary, actual: state.boundary,
