@@ -11,11 +11,15 @@ The substrate has no predefined organisms, cells, genes, species, metabolisms or
 - [Experimental specification](docs/SPECIFICATION.md)
 - [Phased development plan](docs/DEVELOPMENT_PLAN.md)
 - [Architecture principles](docs/ARCHITECTURE_PRINCIPLES.md)
-- [Phase 1 scope](docs/PHASE_1.md)
+- [Substrate model contract](docs/SUBSTRATE_MODEL.md)
+- [Transition and conflict-resolution contract](docs/TRANSITION_CONTRACT.md)
+- [Pending architecture decisions](docs/DECISIONS_PENDING.md)
+- [Phase 1 record](docs/PHASE_1.md)
+- [Phase 2 record](docs/PHASE_2.md)
 
 ## Current status
 
-**Phase 1: repository and scientific foundations.** The former project is archived on a separate branch. This branch establishes the new project identity, scientific contract, roadmap and documentation validation. Runtime and language choices remain open pending comparative evidence.
+**Phase 2 complete:** logical substrate semantics and transition contracts are defined and versioned. Phase 3 will implement a small deterministic reference runtime against these contracts. Language and physical storage layout remain open until representative workloads can be compared.
 
 ## Central research question
 

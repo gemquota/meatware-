@@ -114,7 +114,7 @@ Separate four concerns:
 
 Substrate and dynamics must not depend on biological classifications or visualisation. Analysis and visualisation observe without changing simulation state.
 
-The preferred representation is dynamic graphs and networks with extensible entity state and recursive relationships. Support hierarchical interaction ranges, spatial locality, variable numerical precision, approximation of distant or low-activity processes, multiple resolutions with explicit approximation rules, hybrid timescale scheduling and causal consistency.
+The logical model uses dynamic graph semantics: entities and state-bearing relations form a potentially recursive network. This does not prescribe a physical storage layout; arrays, sparse tables, adjacency structures and hybrids remain implementation candidates. Support hierarchical interaction ranges, spatial locality, variable numerical precision, approximation of distant or low-activity processes, multiple resolutions with explicit approximation rules, hybrid timescale scheduling and causal consistency.
 
 Compare multiple execution models for reproducibility and equivalence. Execution may be asynchronous, event-driven, parallel or sequential where appropriate.
 

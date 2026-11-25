@@ -1,0 +1,17 @@
+{
+  "contract_version": "1.0",
+  "cases": [
+    {"id": "independent-writes", "description": "Writes to independent properties both commit.", "expected": "both_values_present"},
+    {"id": "conflicting-writes-reject", "description": "Conflicting writes use the configured reject policy.", "expected": "all_conflicting_proposals_rejected"},
+    {"id": "conflicting-writes-priority", "description": "Stable priority resolves a write conflict independent of input iteration order.", "expected": "same_winner_for_all_input_permutations"},
+    {"id": "write-remove-conflict", "description": "A write/remove conflict is detected and recorded.", "expected": "declared_policy_applied_and_conflict_recorded"},
+    {"id": "retire-write-conflict", "description": "A retired item cannot also receive a successful property write.", "expected": "declared_policy_applied"},
+    {"id": "dangling-endpoint", "description": "Retirement cannot leave an active relation with a retired endpoint.", "expected": "batch_rejected_or_endpoint_policy_applied"},
+    {"id": "duplicate-identifier", "description": "Duplicate active or retired identifiers cannot be reused.", "expected": "deterministic_batch_failure"},
+    {"id": "atomic-failure", "description": "A failed batch leaves the source configuration unchanged.", "expected": "source_hash_unchanged"},
+    {"id": "next-boundary-eligibility", "description": "New items are not eligible for proposals from their creation boundary.", "expected": "first_eligible_at_next_boundary"},
+    {"id": "iteration-order-independence", "description": "Permuting proposal input order does not alter deterministic output.", "expected": "identical_canonical_state_hash"},
+    {"id": "seeded-replay", "description": "Same manifest and random roots reproduce the same reference result.", "expected": "identical_canonical_state_hash"},
+    {"id": "observer-non-interference", "description": "Reading or serializing state cannot mutate the source configuration.", "expected": "source_hash_unchanged"}
+  ]
+}

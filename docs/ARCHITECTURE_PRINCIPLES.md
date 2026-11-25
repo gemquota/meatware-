@@ -1,6 +1,6 @@
 # Architecture Principles
 
-These principles constrain every implementation phase.
+These principles constrain every implementation phase. The normative substrate and transition definitions live in [SUBSTRATE_MODEL.md](SUBSTRATE_MODEL.md) and [TRANSITION_CONTRACT.md](TRANSITION_CONTRACT.md).
 
 ## Separation of concerns
 
@@ -12,6 +12,25 @@ These principles constrain every implementation phase.
 - **Experiment orchestration:** runs, seeds, branches and provenance.
 
 Analysis and visualisation must not mutate simulation state. Substrate and dynamics must not depend on biological classifications or rendering.
+
+## Logical substrate
+
+- Model a dynamic graph of state-bearing entities and state-bearing relations.
+- Relations may reference entities or other relations.
+- Do not impose a universal root, owner, parent/child tree or organisational hierarchy.
+- Give identities opaque, stable, non-reused semantics within a run.
+- Keep property values typed, extensible and canonically serializable.
+- Treat composite configurations as observed arrangements, not privileged domain objects.
+
+## Transition semantics
+
+- Evaluate immutable proposals against a completed source configuration.
+- Resolve conflicts through explicit, versioned policies.
+- Commit accepted batches atomically.
+- Never silently use last-write-wins.
+- Give newly created items a declared eligibility boundary.
+- Use explicit keyed random streams.
+- Make failed transitions and causal dependencies observable.
 
 ## Scientific invariants
 
@@ -39,7 +58,7 @@ Analysis and visualisation must not mutate simulation state. Substrate and dynam
 
 ## Evidence standard
 
-Visual resemblance is not equivalence. Compare state distributions, interaction statistics, persistence, propagation, causal traces and relevant trajectory properties. State clearly when exact equivalence is impossible or not claimed.
+Visual resemblance is useful for exploratory screening, not proof of scientific equivalence. Compare state distributions, interaction statistics, persistence, propagation, causal traces and relevant trajectory properties. State clearly when exact equivalence is impossible or not claimed.
 
 ## Architecture decision records
 

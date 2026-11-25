@@ -62,7 +62,7 @@ Phases are sequential gates, not calendar promises. Estimates are deferred until
 
 **Deliverables:** substrate data model, transition contract, relationship/composition semantics, transformation semantics, configuration schema, determinism specification and architecture decision records for language/storage/runtime.
 
-**Acceptance:** every primitive has precise operational meaning; biological concepts are unnecessary; conflicting transformations have defined resolution; recursive structures preserve identity and ownership; invariants are independently testable; at least two implementation approaches are compared against representative workloads.
+**Acceptance:** every primitive has precise operational meaning; biological concepts are unnecessary; conflicting transformations have defined resolution; recursive structures preserve identity and endpoint validity; invariants are independently testable; implementation and storage candidates are recorded without premature selection. Representative workload benchmarks are a Phase 3/8 deliverable, once executable prototypes exist.
 
 **Exit gate:** reference model can be implemented without unresolved semantic ambiguity.
 
