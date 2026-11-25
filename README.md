@@ -17,6 +17,7 @@ The substrate has no predefined organisms, cells, genes, species, metabolisms or
 - [Phase 1 record](docs/PHASE_1.md)
 - [Phase 2 record](docs/PHASE_2.md)
 - [Phase 3 record](docs/PHASE_3.md)
+- [Phase 4 record](docs/PHASE_4.md)
 - [Interactive MVP 0.1](docs/MVP_0.1.md)
 - [Run manifest schema](docs/RUN_MANIFEST.md)
 
