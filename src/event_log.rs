@@ -243,6 +243,20 @@ mod tests {
     }
 
     #[test]
+    fn replay_preserves_explicit_conflict_policy() {
+        let mut state = initial();
+        let mut log = EventLog::new(&state).unwrap();
+        let proposals = [
+            proposal(0, 9, 9),
+            proposal(0, 2, 2),
+        ];
+        log.append_with_policy(&mut state, &proposals, ConflictPolicy::LowestProposalKeyWins).unwrap();
+        assert_eq!(state.entities[&1].properties["signal"], Value::Integer(2));
+        assert_eq!(log.records[0].conflict_policy, ConflictPolicy::LowestProposalKeyWins);
+        assert_eq!(state.state_hash().unwrap(), log.replay().unwrap().state_hash().unwrap());
+    }
+
+    #[test]
     fn tampered_record_is_detected_during_replay() {
         let mut state = initial();
         let mut log = EventLog::new(&state).unwrap();
