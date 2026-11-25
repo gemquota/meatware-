@@ -28,11 +28,11 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 - [x] Generated changes use ordinary proposals and the existing atomic transition validator.
 - [x] Relationship endpoint sets can be replaced through atomic edits with source-state endpoint read dependencies.
 - [x] Endpoint replacement participates in write-conflict detection and rejects empty or dangling endpoint sets.
-- [x] Tests for pairwise relation formation, reproducibility, source immutability, evaluation budgets and invalid rule definitions.
+- [x] Tests for pairwise relation formation, reproducibility, source immutability, evaluation budgets, invalid rule definitions and endpoint-read/reconfiguration atomicity.
 
 ## Important limitations
 
-This is a first scheduler, not yet a complete interaction language. Rule evaluators are Rust function pointers, so their executable implementation is versioned by the build and identified by the rule key/version, but rule descriptors are portable metadata, but evaluator implementations are still compiled Rust functions rather than a portable declarative rule language. Candidate generation currently enumerates combinations over all selected entities and/or relations; spatial neighbourhoods, eligibility predicates, directed permutations and efficient indexed candidate queries remain future work. Each rule has an explicit evaluation cap to prevent accidental combinatorial explosions, but reaching that cap is not currently emitted as a separate diagnostic.
+This is a first scheduler, not yet a complete interaction language. Rule evaluators are Rust function pointers. Their executable implementation is identified by the build and rule key/version; serializable descriptors preserve scheduler parameters, but evaluator implementations are not yet a portable declarative rule language. Candidate generation currently enumerates combinations over all selected entities and/or relations; spatial neighbourhoods, eligibility predicates, directed permutations and efficient indexed candidate queries remain future work. Each rule has an explicit evaluation cap to prevent accidental combinatorial explosions, but reaching that cap is not currently emitted as a separate diagnostic.
 
 The evaluator returns proposals, not accepted outcomes. Conflicts, invalid edits, stale reads and dangling endpoints are still resolved or rejected by the substrate transition engine. No proposal is evidence of a successful transformation until the transition commits.
 
