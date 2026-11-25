@@ -6,44 +6,55 @@
 
 ## Language decision
 
-Rust is selected as the primary reference runtime language. The completed candidate parity smoke test provides initial evidence, and Rust fits the project's engineering constraints: explicit ownership, memory safety without a garbage collector, strong data modelling and reproducible builds. The first timing sample favoured Rust (38.328 ms versus 41.311 ms), but a single GitHub-hosted runner observation is supporting evidence only, not a general performance claim. C++ remains a comparison baseline.
-
-The logical substrate contract remains language-neutral. Rust-specific representation choices must not leak into the scientific model.
+Rust is selected as the primary reference runtime language. The C++/Rust candidate parity workload provides initial semantic and performance evidence, but timing from shared hosted runners is informational rather than a general performance claim. The logical substrate contract remains language-neutral. Rust-specific representation choices must not leak into the scientific model.
 
 ## Implemented runtime foundation
 
 - [x] C++/Rust candidate parity workload: 200,000 entities, 1.2 million relations, eight update steps.
-- [x] Rust crate with standard-library-first runtime and serde-based snapshots.
+- [x] Rust crate with deterministic ordered storage and serde-based snapshots.
 - [x] Opaque numeric identities and retired-ID non-reuse tracking.
 - [x] Extensible typed property values and first-class state-bearing relations.
 - [x] Recursive relation-to-relation endpoints.
 - [x] Proposal-based atomic transition batches.
 - [x] Stable proposal ordering and rejection of conflicting writes.
 - [x] Explicit SplitMix64 random streams.
-- [x] Canonical ordered-state encoding, snapshot round-trip and diagnostic state hash.
+- [x] Canonical ordered-state encoding and diagnostic state hashes.
+- [x] Versioned snapshot envelopes with legacy unwrapped-snapshot loading.
+- [x] Append-only transition event log with source/target boundary and hash verification.
+- [x] Deterministic replay by reapplying recorded proposal batches.
+- [x] JSON event-log export/import.
+- [x] Replay integrity checks detect tampered records and out-of-band state mutation.
 - [x] Headless executable entry point.
-- [x] Unit tests for core invariants.
+- [x] Unit tests for runtime invariants, snapshot migration and replay.
 
-## Still open
+## Remaining Phase 3 work
 
 - [ ] Add read-version dependencies and configurable conflict resolvers.
-- [ ] Define stable event-local random-stream key derivation in the run manifest.
-- [ ] Add schema versioning and snapshot migration.
-- [ ] Add deterministic replay from an append-only event log.
+- [ ] Define stable event-local random-stream key derivation in a run manifest.
 - [ ] Add property-based and fuzz testing.
 - [ ] Measure memory and runtime on mutation-heavy workloads.
 - [ ] Validate cross-platform numeric reproducibility limits.
 - [ ] Complete a headless experiment runner and manifest format.
+- [ ] Define a stable snapshot migration policy beyond the first version.
+
+## Event log and snapshot semantics
+
+A snapshot is a versioned envelope containing the complete configuration. The loader continues to accept the original unwrapped configuration format as a legacy version. Unknown versioned formats are rejected explicitly.
+
+An event log stores the initial snapshot and an ordered sequence of transition records. Each record contains the source and target logical boundaries, source and target state hashes, and the proposal batch that produced the transition. Replay starts from the initial snapshot, checks the source boundary/hash, reapplies the proposal batch through the reference transition function, then checks the target boundary/hash.
+
+Appending is transactional: a candidate state is evaluated first, and neither the live configuration nor the log changes if the transition fails. The log also detects if a caller has mutated the live configuration outside the recorded transition path.
+
+The event log records computational transitions, not a complete philosophical or physical causal explanation. Rule identifiers, read dependencies, environmental event records and event-local random streams remain future work.
 
 ## Deliberate limitations
 
-The first runtime uses ordered maps for deterministic iteration and canonical state. This is a correctness baseline, not a performance claim. The initial resolver rejects conflicting writes rather than silently choosing a winner. Entity retirement is rejected if it leaves an active relation with a dangling endpoint. New items become visible only after commit.
+The first runtime uses ordered maps for deterministic iteration and canonical state. This is a correctness baseline, not a performance claim. The initial resolver rejects conflicting writes rather than silently choosing a winner. Entity retirement is rejected if it leaves an active relation with a dangling endpoint.
 
-State hashes use FNV-1a 64-bit for diagnostics and regression checks, not cryptographic integrity. Snapshots use ordered JSON; cross-version and cross-platform bitwise equivalence remain unclaimed pending explicit format and numeric-policy tests. The runtime does not yet implement the complete proposal dependency and causal-event model from the Phase 2 contract.
+State hashes use FNV-1a 64-bit for diagnostics and regression checks, not cryptographic integrity. Versioned JSON snapshots do not yet promise cross-version or cross-platform bitwise equivalence. Deterministic replay is guaranteed only to the extent that the same runtime semantics, numeric behaviour and recorded proposal inputs are preserved. The runtime does not yet implement the complete proposal dependency and causal-event model from the Phase 2 contract.
 
 ## Verification
 
-- Candidate parity CI: [run 45528364851](https://github.com/gemquota/meatware-/actions/runs/45528364851).
-- Rust runtime CI: [run 45530549855](https://github.com/gemquota/meatware-/actions/runs/45530549855), successful. Documentation checks, Python tests, nine Rust unit tests and headless runtime execution passed.
-- The first Rust CI attempt exposed formatting differences; the formatting gate was removed rather than claiming formatting had been verified. Runtime correctness remains enforced.
-- No biological primitives, privileged reproduction operation or renderer dependency are present.
+The latest repository CI is the authoritative verification record. It runs documentation validation, Python tests, native Rust tests and the headless runtime. The browser Pages workflow separately compiles the Rust WebAssembly target and deploys the site. No local Rust compilation is claimed where the tool environment does not provide Cargo.
+
+No biological primitives, privileged reproduction operation or renderer dependency are present in the reference substrate.
