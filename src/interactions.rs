@@ -314,6 +314,22 @@ mod tests {
     }
 
     #[test]
+    fn eligibility_receives_explicit_rule_parameters() {
+        fn only_with_enabled_parameter(_source: &Configuration, _participants: &[Endpoint], parameters: &crate::Properties) -> bool {
+            matches!(parameters.get("enabled"), Some(Value::Bool(true)))
+        }
+        let state = source();
+        let mut parameters = crate::Properties::new();
+        parameters.insert("enabled".into(), Value::Bool(true));
+        let rule = InteractionRule::entities(11, 1, 2, 10, emit_relation)
+            .with_eligibility(only_with_enabled_parameter)
+            .with_parameters(parameters);
+        let proposals = evaluate_interactions(&state, 42, &[rule]).unwrap();
+        assert_eq!(proposals.len(), 3);
+        assert_eq!(rule.descriptor().parameters.get("enabled"), Some(&Value::Bool(true)));
+    }
+
+    #[test]
     fn evaluation_budget_is_enforced_deterministically() {
         let state = source();
         let rule = InteractionRule::entities(7, 1, 2, 2, emit_relation);
