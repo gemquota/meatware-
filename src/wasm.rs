@@ -1,7 +1,62 @@
 use crate::event_log::EventLog;
+use crate::interactions::{evaluate_interactions, InteractionRule};
 use crate::run_manifest::RunManifest;
-use crate::{Configuration, ConflictPolicy, Edit, Entity, Properties, Proposal, RandomStream, Value};
+use crate::{Configuration, ConflictPolicy, Edit, Endpoint, Entity, Properties, Proposal, RandomStream, ReadDependency, Value};
 use wasm_bindgen::prelude::*;
+
+fn relation_eligible(source: &Configuration, participants: &[Endpoint]) -> bool {
+    if participants.len() != 2 { return false; }
+    let (a, b) = match (&participants[0], &participants[1]) {
+        (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
+        _ => return false,
+    };
+    let relation_id = 1_000_000 + a * 501 + b;
+    if source.relations.contains_key(&relation_id) { return false; }
+    let (Some(pa), Some(pb)) = (source.entities.get(&a), source.entities.get(&b)) else { return false; };
+    let mut dx = number(&pb.properties, "x") - number(&pa.properties, "x");
+    let mut dy = number(&pb.properties, "y") - number(&pa.properties, "y");
+    if dx > 0.5 { dx -= 1.0; } else if dx < -0.5 { dx += 1.0; }
+    if dy > 0.5 { dy -= 1.0; } else if dy < -0.5 { dy += 1.0; }
+    dx * dx + dy * dy < 0.055_f64.powi(2)
+}
+
+fn create_relation_proposal(
+    source: &Configuration,
+    participants: &[Endpoint],
+    random: &mut RandomStream,
+) -> Option<Proposal> {
+    let (a, b) = match (&participants[0], &participants[1]) {
+        (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
+        _ => return None,
+    };
+    let pa = &source.entities.get(&a)?.properties;
+    let pb = &source.entities.get(&b)?.properties;
+    let relation_id = 1_000_000 + a * 501 + b;
+    let mut dx = number(pb, "x") - number(pa, "x");
+    let mut dy = number(pb, "y") - number(pa, "y");
+    if dx > 0.5 { dx -= 1.0; } else if dx < -0.5 { dx += 1.0; }
+    if dy > 0.5 { dy -= 1.0; } else if dy < -0.5 { dy += 1.0; }
+    let distance_sq = dx * dx + dy * dy;
+    let mut properties = Properties::new();
+    properties.insert("distance_sq".into(), Value::Float(distance_sq));
+    properties.insert("weight".into(), Value::Float(random.unit_f64()));
+    Some(Proposal {
+        key: 0,
+        source_boundary: source.boundary,
+        reads: vec![
+            ReadDependency::EntityProperty { id: a, key: "x".into(), expected: pa.get("x").cloned() },
+            ReadDependency::EntityProperty { id: a, key: "y".into(), expected: pa.get("y").cloned() },
+            ReadDependency::EntityProperty { id: b, key: "x".into(), expected: pb.get("x").cloned() },
+            ReadDependency::EntityProperty { id: b, key: "y".into(), expected: pb.get("y").cloned() },
+        ],
+        edits: vec![Edit::CreateRelation {
+            id: relation_id,
+            kind: "association".into(),
+            endpoints: participants.to_vec(),
+            properties,
+        }],
+    })
+}
 
 fn number(properties: &Properties, key: &str) -> f64 {
     match properties.get(key) {
@@ -49,6 +104,46 @@ impl World {
             seed, initial_entities, initial_state_hash: format!("{initial_hash:016x}"),
             conflict_policy: ConflictPolicy::Reject,
         })
+    }
+
+    /// Form generic relationships between entities within the fixed experimental radius.
+    /// All candidate pairs are evaluated from one immutable source boundary.
+    pub fn form_relations(&mut self) -> Result<usize, JsValue> {
+        let rule = InteractionRule::entities(
+            0x4d45_4154,
+            1,
+            2,
+            125_000,
+            create_relation_proposal,
+        ).with_eligibility(relation_eligible);
+        let proposals = evaluate_interactions(&self.state, self.seed as u64, &[rule])
+            .map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
+        let count = proposals.len();
+        if count > 0 {
+            self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
+                .map_err(|e| JsValue::from_str(&e.to_string()))?;
+        }
+        Ok(count)
+    }
+
+    pub fn relation_count(&self) -> usize { self.state.relations.len() }
+
+    /// Flattened endpoint coordinates for drawing relationship edges.
+    pub fn relation_edges(&self) -> Vec<f64> {
+        let mut out = Vec::with_capacity(self.state.relations.len() * 4);
+        for relation in self.state.relations.values() {
+            if relation.endpoints.len() != 2 { continue; }
+            let ids = match (&relation.endpoints[0], &relation.endpoints[1]) {
+                (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
+                _ => continue,
+            };
+            let (Some(a), Some(b)) = (self.state.entities.get(&ids.0), self.state.entities.get(&ids.1)) else { continue; };
+            out.push(number(&a.properties, "x"));
+            out.push(number(&a.properties, "y"));
+            out.push(number(&b.properties, "x"));
+            out.push(number(&b.properties, "y"));
+        }
+        out
     }
 
     pub fn step(&mut self, steps: u32) -> Result<(), JsValue> {
