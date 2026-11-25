@@ -1,4 +1,5 @@
-use crate::{Configuration, Edit, Entity, EventLog, Properties, Proposal, RandomStream, Value};
+use crate::event_log::EventLog;
+use crate::{Configuration, Edit, Entity, Properties, Proposal, RandomStream, Value};
 use wasm_bindgen::prelude::*;
 
 fn number(properties: &Properties, key: &str) -> f64 {
