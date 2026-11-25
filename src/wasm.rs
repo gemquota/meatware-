@@ -82,6 +82,7 @@ impl World {
                 proposals.push(Proposal {
                     key: id,
                     source_boundary: boundary,
+                    reads: Vec::new(),
                     edits: vec![
                         Edit::SetEntityProperty { id, key: "a".into(), value: Value::Float(a) },
                         Edit::SetEntityProperty { id, key: "b".into(), value: Value::Float(b) },
