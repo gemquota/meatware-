@@ -293,9 +293,9 @@ impl World {
             // making the control largely invisible at higher values.
             let speed_limit = 0.002 + self.motion * 0.004;
             for i in 0..n {
-                let vx = positions[i].4 * self.damping + fx[i] * self.motion
+                let vx = positions[i].4 * self.damping + fx[i]
                     + (self.random.unit_f64() - 0.5) * self.noise * 0.65;
-                let vy = positions[i].5 * self.damping + fy[i] * self.motion
+                let vy = positions[i].5 * self.damping + fy[i]
                     + (self.random.unit_f64() - 0.5) * self.noise * 0.65;
                 let speed = (vx * vx + vy * vy).sqrt();
                 let (vx, vy) = if speed > speed_limit {
