@@ -152,7 +152,7 @@ impl Configuration {
     }
     pub fn apply_batch_with_policy(&mut self, proposals: &[Proposal], policy: ConflictPolicy) -> Result<(), RuntimeError> {
         let mut ordered = proposals.to_vec(); ordered.sort_by_key(|p| p.key);
-        let mut seen_keys = BTreeSet::new(); let mut writes = BTreeSet::new();
+        let mut seen_keys = BTreeSet::new();
         let mut retires = BTreeSet::new(); let mut edited = BTreeSet::new();
         for p in &ordered {
             if p.source_boundary != self.boundary { return Err(RuntimeError::BoundaryMismatch { expected: self.boundary, actual: p.source_boundary }); }
@@ -161,10 +161,10 @@ impl Configuration {
             for e in &p.edits {
                 match e {
                     Edit::SetEntityProperty{id,key,..}|Edit::RemoveEntityProperty{id,key} => {
-                        let k=format!("e:{id}:{key}"); if !writes.insert(k.clone()) { return Err(RuntimeError::ConflictingWrite(k)); } edited.insert(*id);
+                        let _ = key; edited.insert(*id);
                     }
                     Edit::SetRelationProperty{id,key,..}|Edit::RemoveRelationProperty{id,key} => {
-                        let k=format!("r:{id}:{key}"); if !writes.insert(k.clone()) { return Err(RuntimeError::ConflictingWrite(k)); } edited.insert(*id);
+                        let _ = key; edited.insert(*id);
                     }
                     Edit::RetireEntity{id}|Edit::RetireRelation{id} => { retires.insert(*id); }
                     _ => {}
