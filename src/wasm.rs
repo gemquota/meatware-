@@ -108,7 +108,7 @@ impl World {
 
     /// Form generic relationships between entities within the fixed experimental radius.
     /// All candidate pairs are evaluated from one immutable source boundary.
-    pub fn form_relations(&mut self) -> Result<usize, JsValue> {
+    pub fn form_relations(&mut self) -> Result<u32, JsValue> {
         let rule = InteractionRule::entities(
             0x4d45_4154,
             1,
@@ -123,7 +123,7 @@ impl World {
             self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
         }
-        Ok(count)
+        Ok(count as u32)
     }
 
     pub fn relation_count(&self) -> usize { self.state.relations.len() }
