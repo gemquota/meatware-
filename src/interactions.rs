@@ -10,7 +10,7 @@ use crate::{
 use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 
-pub type RuleEligibility = fn(source: &Configuration, participants: &[Endpoint]) -> bool;
+pub type RuleEligibility = fn(source: &Configuration, participants: &[Endpoint], parameters: &crate::Properties) -> bool;
 
 pub type RuleEvaluator = fn(
     source: &Configuration,
@@ -44,6 +44,8 @@ pub struct InteractionRuleDescriptor {
     pub include_entities: bool,
     pub include_relations: bool,
     pub has_eligibility: bool,
+    #[serde(default)]
+    pub parameters: crate::Properties,
 }
 
 #[derive(Clone, Copy)]
@@ -55,6 +57,7 @@ pub struct InteractionRule {
     pub include_entities: bool,
     pub include_relations: bool,
     pub eligible: Option<RuleEligibility>,
+    pub parameters: crate::Properties,
     pub evaluate: RuleEvaluator,
 }
 
@@ -70,6 +73,7 @@ impl InteractionRule {
             include_entities: self.include_entities,
             include_relations: self.include_relations,
             has_eligibility: self.eligible.is_some(),
+            parameters: self.parameters.clone(),
         }
     }
 
@@ -80,12 +84,18 @@ impl InteractionRule {
         max_evaluations: usize,
         evaluate: RuleEvaluator,
     ) -> Self {
-        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: false, eligible: None, evaluate }
+        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: false, eligible: None, parameters: crate::Properties::new(), evaluate }
     }
 
     /// Restricts which stable participant combinations reach the evaluator.
     pub fn with_eligibility(mut self, eligible: RuleEligibility) -> Self {
         self.eligible = Some(eligible);
+        self
+    }
+
+    /// Supplies explicit, serialisable parameters to the eligibility predicate.
+    pub fn with_parameters(mut self, parameters: crate::Properties) -> Self {
+        self.parameters = parameters;
         self
     }
 
@@ -148,7 +158,7 @@ pub fn evaluate_interactions(
 
         for participants in combinations {
             if let Some(eligible) = rule.eligible {
-                if !eligible(source, &participants) { continue; }
+                if !eligible(source, &participants, &rule.parameters) { continue; }
             }
             let proposal_key = stable_proposal_key(rule.key, rule.version, &participants);
             if !seen_proposals.insert(proposal_key) {
@@ -292,7 +302,7 @@ mod tests {
 
     #[test]
     fn only_eligible_combinations_reach_the_evaluator() {
-        fn exclude_first_pair(_source: &Configuration, participants: &[Endpoint]) -> bool {
+        fn exclude_first_pair(_source: &Configuration, participants: &[Endpoint], _parameters: &crate::Properties) -> bool {
             !(participants.len() == 2 && participants[0] == Endpoint::Entity(1) && participants[1] == Endpoint::Entity(2))
         }
         let state = source();
