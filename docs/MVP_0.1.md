@@ -24,6 +24,9 @@ Provide the first usable, public, end-to-end experiment surface. This MVP demons
 - In-browser replay verification and event-log JSON export.
 - An explicit structural experiment that evaluates all bounded entity pairs at one immutable source boundary, applies a deterministic eligibility predicate parameterised by the current interaction range, and creates persistent generic relations through ordinary proposals.
 - Read-only relationship count and edge rendering; relation creation is recorded in the same event log and can be replay-verified. The browser reports the number of relationships created, explains when no pairs qualify, and surfaces transformation errors.
+- Local velocity alignment adds a collective-motion term to nearby pair interactions; it is controlled by interaction strength and motion strength.
+- Relationships have dynamic strength and age. Continued proximity reinforces a relation, separation weakens it, and sufficiently weak relations retire through ordinary logged transitions. Link tension is scaled by current relation strength.
+- Structural diagnostics report multi-entity connected components, largest component size, mean relation strength and mean degree. The HUD displays cluster count, largest component and mean link strength; relation edges are drawn with strength-dependent opacity and width.
 - Generic relations carry a scalar strength, exert strength-weighted spring forces, decay over time and retire through ordinary logged relation edits when their strength falls below a threshold. This provides finite relation lifetimes rather than permanent hand-authored bonds.
 - Structural diagnostics derive connected-component count, largest component size and mean graph degree from the generic relation graph. These are observer-side measurements, not substrate concepts.
 - Relationship edge opacity visualises current relation strength.
