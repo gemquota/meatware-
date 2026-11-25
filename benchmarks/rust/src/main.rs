@@ -6,7 +6,7 @@ fn main(){
  let start=Instant::now();let mut off=Vec::with_capacity(N+1);let mut edges=Vec::with_capacity(N*D);off.push(0);
  for i in 0..N{for k in 0..D{edges.push(((i*37+k*7919+1)%N) as u32);}off.push(edges.len());}
  let mut a=Vec::with_capacity(N);let mut b=vec![S::default();N];
- for i in 0..N{a.push(S{a:(i%101) as f64*.01,b:((i*17)%97) as f64*.001,c:((i*31)%89) as f64*.0001});}
+ for i in 0..N{a.push(S{a:(i%101) as f64*0.01,b:((i*17)%97) as f64*0.001,c:((i*31)%89) as f64*0.0001});}
  let mut ps=Vec::with_capacity(N/5+1);
  for step in 0..STEPS{
   for i in 0..N{let mut sum=0.0_f64;for e in off[i]..off[i+1]{sum+=a[edges[e] as usize].b*((e*17%13+1) as f64)*1e-6;}b[i]=S{a:a[i].a+sum,b:a[i].b+a[i].a*1e-7,c:a[i].c+(a[i].a+sum)*1e-9};}
