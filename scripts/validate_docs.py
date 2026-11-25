@@ -12,6 +12,7 @@ REQUIRED = (
     "docs/ARCHITECTURE_PRINCIPLES.md",
     "docs/PHASE_1.md",
     "docs/PHASE_2.md",
+    "docs/PHASE_3.md",
     "docs/SUBSTRATE_MODEL.md",
     "docs/TRANSITION_CONTRACT.md",
     "docs/DECISIONS_PENDING.md",
