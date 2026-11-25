@@ -29,7 +29,7 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 - [x] Generated changes use ordinary proposals and the existing atomic transition validator.
 - [x] Relationship endpoint sets can be replaced through atomic edits with source-state endpoint read dependencies.
 - [x] Endpoint replacement participates in write-conflict detection and rejects empty or dangling endpoint sets.
-- [x] Tests for pairwise relation formation, reproducibility, source immutability, evaluation budgets, invalid rule definitions and endpoint-read/reconfiguration atomicity.
+- [x] Tests for pairwise and three-party relation formation, reproducibility, source immutability, evaluation budgets, invalid rule definitions and endpoint-read/reconfiguration atomicity.
 
 ## Important limitations
 
