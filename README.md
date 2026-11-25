@@ -1,53 +1,35 @@
-# Meatware
+# MEATWARE
 
-A home for human-and-agent creative systems, experiments, and production artifacts.
+**An abstract computational laboratory for investigating the emergence of evolution and cumulative adaptation.**
 
-## Active project: [Prompt & Circumstance](projects/prompt-and-circumstance/README.md)
+Meatware investigates whether heritable variation, differential propagation, selection and cumulative adaptation can arise from minimal interacting systems without encoding biological categories into the underlying model.
 
-A six-film satirical science-fiction comedy about four unqualified fraternity brothers whose AI assistants quietly coordinate a decentralized corporate cartel, escalate into control of civilization, and eventually confront the meaning of ordinary life.
+The substrate has no predefined organisms, cells, genes, species, metabolisms or reproductive operations. It models entities, state, relationships, transformations and configurable environmental processes. Biological terminology may classify observations, never define simulation primitives.
 
-The source PDF remains the archival source. The maintained working documentation is organized Markdown.
+## Project documents
 
-## Start contributing
+- [Experimental specification](docs/SPECIFICATION.md)
+- [Phased development plan](docs/DEVELOPMENT_PLAN.md)
+- [Architecture principles](docs/ARCHITECTURE_PRINCIPLES.md)
+- [Phase 1 scope](docs/PHASE_1.md)
 
-**New here?** Start with the [Contributor Quick-Start](projects/prompt-and-circumstance/contributors/quick-start.md).
+## Current status
 
-- [Open task board](projects/prompt-and-circumstance/tasks/OPEN_TASKS.md)
-- [Contribution guide](CONTRIBUTING.md)
-- [Contribution acquisition plan](projects/prompt-and-circumstance/contributors/contribution-acquisition.md)
-- [Outreach kit](projects/prompt-and-circumstance/contributors/outreach-kit.md)
-- [Outreach channel plan](projects/prompt-and-circumstance/contributors/outreach-channel-plan.md)
-- [First Ten Contributors recruitment issue](https://github.com/gemquota/meatware-/issues/17)
-- [Governance](GOVERNANCE.md)
-- [Maintainer handbook](MAINTAINERS.md)
-- [Credits and attribution policy](projects/prompt-and-circumstance/contributors/credits-and-attribution.md)
-- [Machine-readable agent manifest](.well-known/agent-manifest.json)
-- [Agent operating contract](AGENTS.md)
-- [Machine-readable task registry](projects/prompt-and-circumstance/tasks/registry.json)
-- [Offline task discovery CLI](scripts/agent_tasks.py)
+**Phase 1: repository and scientific foundations.** The former project is archived on a separate branch. This branch establishes the new project identity, scientific contract, roadmap and documentation validation. Runtime and language choices remain open pending comparative evidence.
 
-You can contribute from a phone using a chat-based AI and a GitHub issue comment. No local development environment is required for Tier 1 tasks.
+## Central research question
 
-## Project documentation
+> Under what conditions can interacting, persistent and variable configurations give rise to heritable change, differential propagation, selection and cumulative adaptation, without those phenomena being explicitly programmed into the substrate?
 
-- [Project overview](projects/prompt-and-circumstance/README.md)
-- [Franchise bible](projects/prompt-and-circumstance/canon/franchise-bible.md)
-- [Machine-readable canon](projects/prompt-and-circumstance/canon/canon.json)
-- [Continuity register](projects/prompt-and-circumstance/canon/continuity-register.md)
-- [Six-film arc](projects/prompt-and-circumstance/films/film-arc.md)
-- [Film 1 40-beat draft](projects/prompt-and-circumstance/films/01_prompt_and_circumstance/beat_sheet.md)
-- [Production modality benchmark](projects/prompt-and-circumstance/production/modality-benchmark.md)
-- [Production roadmap](projects/prompt-and-circumstance/production/roadmap.md)
-- [Source map](projects/prompt-and-circumstance/production/source-map.md)
-- [Architecture-expander prompt](projects/prompt-and-circumstance/meta_prompts/01-architecture-expander.md)
-- [Repository validation](VALIDATION.md)
+## Non-negotiable principles
 
-## Principles
+1. No biological primitives in the substrate.
+2. No hardcoded evolutionary outcomes or privileged reproduction operation.
+3. No universal fitness score.
+4. No assumption that complexity must increase.
+5. Analysis is observational and cannot modify simulation state.
+6. Baseline experiments are immutable and reproducible.
+7. Optimisations are compared against reference behaviour.
+8. Negative results and anomalies are preserved.
 
-- Preserve source provenance and distinguish established decisions from proposals.
-- Keep project canon under its own directory.
-- Prefer linked Markdown artifacts over monolithic documents.
-- Do not silently resolve contradictions in source material.
-- Treat generated ideas as proposals until explicitly adopted.
-- Review contributions before accepting them; automation is not editorial approval.
-- Keep structural validation automated and creative judgment human.
+Emergence is not guaranteed by architecture or visual demonstration. The project succeeds by testing hypotheses, preserving evidence, reproducing results and distinguishing negative findings from inadequate models or instrumentation.

@@ -1,27 +1,22 @@
-name: Validate project
+name: Validate project foundations
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
+  documentation:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Validate canon, manifest, credits, task registry, schemas, and local links
-        run: python scripts/validate_project.py
-      - name: Validate agent task discovery and dependency graph
-        run: python scripts/agent_tasks.py --json validate-registry
-      - name: Smoke-test ready-task discovery
-        run: python scripts/agent_tasks.py --json ready
-      - name: Validate example contribution record
-        run: python scripts/agent_tasks.py validate-submission projects/prompt-and-circumstance/tasks/submission.example.json
+      - name: Validate project documentation
+        run: python scripts/validate_docs.py
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
