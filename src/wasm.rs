@@ -139,24 +139,6 @@ impl World {
 
     pub fn relation_count(&self) -> usize { self.state.relations.len() }
 
-    /// [multi-entity components, largest component, mean relation strength, mean degree].
-    pub fn structural_metrics(&self) -> Vec<f64> {
-        let ids: Vec<u64> = self.state.entities.keys().copied().collect();
-        let mut parent: Vec<usize> = (0..ids.len()).collect();
-        fn root(parent: &mut [usize], mut i: usize) -> usize { while parent[i] != i { parent[i] = parent[parent[i]]; i = parent[i]; } i }
-        let mut degree=vec![0usize;ids.len()]; let mut strength=0.0; let mut edges=0usize;
-        for relation in self.state.relations.values() {
-            if relation.endpoints.len()!=2 {continue;}
-            let (a,b)=match (&relation.endpoints[0],&relation.endpoints[1]){(Endpoint::Entity(a),Endpoint::Entity(b))=>(*a,*b),_=>continue};
-            let (Some(i),Some(j))=(ids.iter().position(|x|*x==a),ids.iter().position(|x|*x==b))else{continue};
-            let ri=root(&mut parent,i);let rj=root(&mut parent,j);parent[ri]=rj;degree[i]+=1;degree[j]+=1;edges+=1;
-            strength+=number(&relation.properties,"strength");
-        }
-        let mut sizes=std::collections::BTreeMap::<usize,usize>::new();
-        for i in 0..ids.len(){let r=root(&mut parent,i);*sizes.entry(r).or_default()+=1;}
-        vec![sizes.values().filter(|&&s|s>1).count() as f64,sizes.values().copied().max().unwrap_or(0) as f64,if edges>0{strength/edges as f64}else{0.0},degree.iter().sum::<usize>() as f64/ids.len().max(1) as f64]
-    }
-
     /// Structural diagnostics derived from the generic relation graph:
     /// [connected components, largest component, mean degree, edge count].
     pub fn structure_metrics(&self) -> Vec<f64> {
@@ -199,10 +181,6 @@ impl World {
         let mean_degree = degree.iter().sum::<usize>() as f64 / ids.len().max(1) as f64;
         let mean_strength = if edge_count > 0 { strength_sum / edge_count as f64 } else { 0.0 };
         vec![cluster_count as f64, largest as f64, mean_degree, mean_strength]
-    }
-
-    pub fn relation_strengths(&self) -> Vec<f64> {
-        self.state.relations.values().map(|r| match r.properties.get("strength") { Some(Value::Float(v)) => *v, _ => 0.72 }).collect()
     }
 
     /// Flattened endpoint coordinates for drawing relationship edges.
