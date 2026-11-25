@@ -11,8 +11,6 @@ pub struct World {
     coupling: f64,
     noise: f64,
     radius: f64,
-    width: f64,
-    height: f64,
 }
 
 impl World {
@@ -30,7 +28,7 @@ impl World {
 impl World {
     #[wasm_bindgen(constructor)]
     pub fn new(count:usize, seed:u32) -> World {
-        let mut w=World { points:Vec::with_capacity(count.min(2000)), seed:seed as u64, tick:0, coupling:0.08, noise:0.008, radius:0.055, width:1.0, height:1.0 };
+        let mut w=World { points:Vec::with_capacity(count.min(2000)), seed:seed as u64, tick:0, coupling:0.08, noise:0.008, radius:0.055 };
         for _ in 0..count.clamp(8,2000) {
             let x=w.random(); let y=w.random(); let a=w.random(); let b=w.random();
             w.points.push(Point{x,y,a,b});
@@ -59,11 +57,13 @@ impl World {
             for i in 0..n {
                 let na=(self.random()-0.5)*self.noise;
                 let nb=(self.random()-0.5)*self.noise;
+                let nx=(self.random()-0.5)*0.00015;
+                let ny=(self.random()-0.5)*0.00015;
                 let p=&mut self.points[i];
                 p.a=(p.a+da[i]+na).clamp(0.0,1.0);
                 p.b=(p.b+db[i]+nb).clamp(0.0,1.0);
-                p.x=Self::wrap(p.x+(p.a-0.5)*0.00045+(self.random()-0.5)*0.00015,1.0);
-                p.y=Self::wrap(p.y+(p.b-0.5)*0.00045+(self.random()-0.5)*0.00015,1.0);
+                p.x=Self::wrap(p.x+(p.a-0.5)*0.00045+nx,1.0);
+                p.y=Self::wrap(p.y+(p.b-0.5)*0.00045+ny,1.0);
             }
             self.tick+=1;
         }
