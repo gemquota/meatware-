@@ -28,7 +28,7 @@ This is intentionally a narrow dynamics testbed, not a substitute for the comple
 
 ## Reproducibility scope
 
-The random stream is deterministic for the same compiled runtime, seed and execution path. The exported manifest is a record of run conditions and a terminal state hash; it is not yet a complete replay log. Cross-version, cross-browser and cross-architecture bitwise reproducibility are not claimed. The hash is a diagnostic checksum, not a cryptographic integrity mechanism.
+The random stream is deterministic for the same compiled runtime, seed and execution path. The browser demo's exported manifest is a record of run conditions and a terminal state hash; it is not yet wired to the general substrate event log. The Rust reference runtime now supports versioned snapshots and verified proposal-batch replay independently of the browser demo. Cross-version, cross-browser and cross-architecture bitwise reproducibility are not claimed. The hash is a diagnostic checksum, not a cryptographic integrity mechanism.
 
 The replay control reconstructs the initial state from the displayed seed and settings and runs exactly 100 transitions. Changing parameters after a run changes the live model settings; reset is required to apply a new initial population or seed.
 
@@ -56,7 +56,7 @@ Open http://localhost:8000. A local HTTP server is required because browser modu
 ## Next scientific work
 
 1. Move the browser MVP onto the same general entity/relationship substrate contracts rather than maintaining a parallel specialised representation.
-2. Add explicit transformation proposals and a generic event log.
+2. Connect the browser experiment to the general runtime and expose generic transformation proposals and event-log replay.
 3. Add environment fields and resource accounting as configurable model modules.
 4. Add snapshot/replay provenance and controlled multi-seed trials.
 5. Add observational measurements for persistent configurations and repeatable state transfer.
