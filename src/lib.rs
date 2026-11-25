@@ -84,10 +84,31 @@ impl Configuration {
         for byte in self.canonical_bytes()? { h ^= u64::from(byte); h = h.wrapping_mul(0x100000001b3); }
         Ok(h)
     }
-    pub fn snapshot(&self) -> Result<Vec<u8>, RuntimeError> { self.canonical_bytes() }
+    pub fn snapshot(&self) -> Result<Vec<u8>, RuntimeError> {
+        self.validate()?;
+        let envelope = crate::event_log::SnapshotEnvelope {
+            format: "meatware-snapshot".into(),
+            schema_version: crate::event_log::SNAPSHOT_SCHEMA_VERSION,
+            state: self.clone(),
+        };
+        serde_json::to_vec(&envelope).map_err(|e| RuntimeError::InvalidSnapshot(e.to_string()))
+    }
     pub fn from_snapshot(bytes: &[u8]) -> Result<Self, RuntimeError> {
-        let state: Self = serde_json::from_slice(bytes).map_err(|e| RuntimeError::InvalidSnapshot(e.to_string()))?;
-        state.validate()?; Ok(state)
+        let value: serde_json::Value = serde_json::from_slice(bytes)
+            .map_err(|e| RuntimeError::InvalidSnapshot(e.to_string()))?;
+        let state = if value.get("format").and_then(serde_json::Value::as_str) == Some("meatware-snapshot") {
+            let envelope: crate::event_log::SnapshotEnvelope = serde_json::from_value(value)
+                .map_err(|e| RuntimeError::InvalidSnapshot(e.to_string()))?;
+            if envelope.schema_version != crate::event_log::SNAPSHOT_SCHEMA_VERSION {
+                return Err(RuntimeError::InvalidSnapshot(format!("unsupported snapshot schema version: {}", envelope.schema_version)));
+            }
+            envelope.state
+        } else {
+            // Read legacy unwrapped snapshots written before schema versioning.
+            serde_json::from_value(value).map_err(|e| RuntimeError::InvalidSnapshot(e.to_string()))?
+        };
+        state.validate()?;
+        Ok(state)
     }
     pub fn validate(&self) -> Result<(), RuntimeError> {
         let mut identities = BTreeSet::new();
