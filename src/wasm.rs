@@ -132,6 +132,33 @@ impl World {
             .map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
         let count = proposals.len();
         if count > 0 {
+            // Relations have finite persistence: their influence decays gradually.
+            // Once too weak, they retire through the same ordinary event-log path.
+            for relation in self.state.relations.values() {
+                let old_weight = number(&relation.properties, "weight").clamp(0.0, 1.0);
+                let next_weight = (old_weight - 0.00008).max(0.0);
+                let mut edits = Vec::new();
+                if next_weight <= 0.025 {
+                    edits.push(Edit::RetireRelation { id: relation.id });
+                } else {
+                    edits.push(Edit::SetRelationProperty {
+                        id: relation.id,
+                        key: "weight".into(),
+                        value: Value::Float(next_weight),
+                    });
+                }
+                proposals.push(Proposal {
+                    key: relation.id,
+                    source_boundary: boundary,
+                    reads: vec![ReadDependency::RelationProperty {
+                        id: relation.id,
+                        key: "weight".into(),
+                        expected: relation.properties.get("weight").cloned(),
+                    }],
+                    edits,
+                });
+            }
+
             self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
             self.used_event_local_streams = true;
@@ -226,7 +253,8 @@ impl World {
                     Some(Value::Float(v)) => v.max(0.0).sqrt(),
                     _ => 0.04,
                 };
-                let tension = (d - rest).clamp(-0.15, 0.15) * 0.0025 * self.motion;
+                let strength = number(&relation.properties, "weight").clamp(0.0, 1.0);
+                let tension = (d - rest).clamp(-0.15, 0.15) * 0.008 * strength * self.motion;
                 let px = dx / d * tension;
                 let py = dy / d * tension;
                 fx[i] += px; fy[i] += py;
@@ -234,7 +262,7 @@ impl World {
             }
 
             let boundary = self.state.boundary;
-            let mut proposals = Vec::with_capacity(n);
+            let mut proposals = Vec::with_capacity(n + self.state.relations.len());
             for i in 0..n {
                 let vx = (positions[i].4 * self.damping + fx[i]
                     + (self.random.unit_f64() - 0.5) * self.noise * 0.12).clamp(-0.009, 0.009);
