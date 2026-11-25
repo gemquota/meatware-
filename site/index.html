@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1110">
+<meta name="description" content="Meatware is an abstract computational laboratory investigating the emergence of evolution and cumulative adaptation.">
+<title>Meatware · An experimental substrate</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1110;--panel:#111b18;--panel2:#16231f;--line:#263a32;--ink:#e9f1eb;--muted:#9aada3;--green:#a6e3b7;--lime:#d4f38a;--orange:#e9ad79;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#1b352a 0,transparent 42%),var(--bg);color:var(--ink);font:16px/1.6 var(--sans)}a{color:var(--green);text-decoration:none}a:hover{text-decoration:underline}header,main,footer{width:min(1100px,calc(100% - 40px));margin:auto}.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}.brand{font:700 17px var(--mono);letter-spacing:.13em}.brand span{color:var(--green)}nav{display:flex;gap:22px;font-size:13px;color:var(--muted)}.hero{padding:86px 0 64px;max-width:850px}.eyebrow{font:12px var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--green)}h1{font-size:clamp(42px,7vw,76px);line-height:1.02;letter-spacing:-.055em;margin:20px 0 24px;font-weight:650}.hero p{max-width:690px;font-size:19px;color:#b9c9bf}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.button{display:inline-flex;padding:11px 16px;border:1px solid var(--line);border-radius:7px;background:var(--panel);font-size:14px}.button.primary{background:var(--green);color:#102018;border-color:var(--green);font-weight:700}.section{padding:34px 0 58px;border-top:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:22px}.section h2{font-size:25px;letter-spacing:-.03em;margin:0}.section-head p{margin:0;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:10px;padding:21px;min-height:155px}.card .tag{font:11px var(--mono);letter-spacing:.1em;color:var(--green);text-transform:uppercase}.card h3{font-size:17px;margin:10px 0 7px}.card p{margin:0;color:var(--muted);font-size:14px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{border:1px solid var(--line);border-radius:9px;padding:18px;background:#101916}.metric strong{display:block;font:clamp(22px,3vw,32px) var(--mono);color:var(--lime);letter-spacing:-.05em}.metric span{display:block;color:var(--muted);font-size:12px;margin-top:5px}.note{margin-top:14px;padding:13px 16px;border-left:2px solid var(--orange);background:#171712;color:#b9b8a8;font-size:13px}.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.phase{padding:15px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.phase b{font:12px var(--mono);color:var(--green)}.phase strong{display:block;margin:7px 0 4px;font-size:14px}.phase small{color:var(--muted)}.phase.active{border-color:#719d7e;background:#14231b}.links{display:flex;flex-wrap:wrap;gap:18px;font-size:14px}footer{border-top:1px solid var(--line);padding:25px 0 40px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:760px){nav{gap:12px}.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.phases{grid-template-columns:repeat(2,1fr)}.hero{padding:62px 0 48px}.section-head{display:block}.section-head p{margin-top:7px}}@media(max-width:420px){header,main,footer{width:calc(100% - 28px)}nav a:nth-child(2){display:none}.metrics{gap:8px}.metric{padding:13px}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="#"><span>◉</span> MEATWARE</a><nav><a href="#model">Model</a><a href="#evidence">Evidence</a><a href="#roadmap">Roadmap</a><a href="https://github.com/gemquota/meatware-">GitHub ↗</a></nav></header>
+<main>
+<section class="hero">
+<div class="eyebrow">Computational laboratory · Research programme</div>
+<h1>What happens when nothing is told what life is?</h1>
+<p>Meatware is an abstract experimental substrate for investigating how evolution, cumulative adaptation and complex organisation might emerge from minimal interacting systems, without encoding biological categories into the machinery.</p>
+<div class="actions"><a class="button primary" href="https://github.com/gemquota/meatware-">Explore the repository ↗</a><a class="button" href="https://github.com/gemquota/meatware-/blob/main/docs/SPECIFICATION.md">Read the specification</a></div>
+</section>
+<section class="section" id="model">
+<div class="section-head"><h2>The substrate makes no promises</h2><p>Mechanisms first. Interpretations later.</p></div>
+<div class="grid">
+<article class="card"><div class="tag">01 / Representation</div><h3>Entities and relations</h3><p>Extensible state-bearing entities and recursively composable relations. No fixed organisational hierarchy or privileged biological object types.</p></article>
+<article class="card"><div class="tag">02 / Dynamics</div><h3>General transformations</h3><p>State changes arise from interactions, internal dynamics and environmental processes. No built-in reproduction or evolution command.</p></article>
+<article class="card"><div class="tag">03 / Method</div><h3>Observation without interference</h3><p>Analysis measures persistence, variation, propagation, information and adaptation without changing the system it observes.</p></article>
+</div>
+</section>
+<section class="section" id="evidence">
+<div class="section-head"><h2>First executable evidence</h2><p>Candidate workload · CI run 45528364851</p></div>
+<div class="metrics">
+<div class="metric"><strong>200k</strong><span>state-bearing entities</span></div>
+<div class="metric"><strong>1.2m</strong><span>directed relations</span></div>
+<div class="metric"><strong>8</strong><span>synchronous update steps</span></div>
+<div class="metric"><strong>PASS</strong><span>cross-language checksum parity</span></div>
+</div>
+<div class="grid" style="margin-top:12px">
+<div class="card"><div class="tag">C++ candidate</div><h3>41.311 ms</h3><p>One GitHub-hosted runner smoke measurement.</p></div>
+<div class="card"><div class="tag">Rust candidate</div><h3>38.328 ms</h3><p>Same workload and matching checksum within tolerance.</p></div>
+<div class="card"><div class="tag">Interpretation</div><h3>No winner selected</h3><p>One noisy timing sample is not a language decision. Repeated controlled benchmarks remain required.</p></div>
+</div>
+<div class="note">This is infrastructure and a candidate workload, not yet an evolutionary simulation. No emergence, adaptation or biological transition has been demonstrated.</div>
+</section>
+<section class="section" id="roadmap">
+<div class="section-head"><h2>Development track</h2><p>Current state, not aspirational theatre.</p></div>
+<div class="phases">
+<div class="phase"><b>PHASE 01</b><strong>Research specification</strong><small>Complete</small></div>
+<div class="phase"><b>PHASE 02</b><strong>Substrate contracts</strong><small>Complete</small></div>
+<div class="phase active"><b>PHASE 03</b><strong>Reference runtime</strong><small>In progress</small></div>
+<div class="phase"><b>PHASE 04+</b><strong>Dynamics and experiments</strong><small>Planned</small></div>
+</div>
+</section>
+<section class="section">
+<div class="section-head"><h2>Read the working documents</h2><p>Versioned alongside the code.</p></div>
+<div class="links">
+<a href="https://github.com/gemquota/meatware-/blob/main/docs/SPECIFICATION.md">Experimental specification ↗</a>
+<a href="https://github.com/gemquota/meatware-/blob/main/docs/DEVELOPMENT_PLAN.md">Phased development plan ↗</a>
+<a href="https://github.com/gemquota/meatware-/blob/main/docs/SUBSTRATE_MODEL.md">Substrate model ↗</a>
+<a href="https://github.com/gemquota/meatware-/blob/main/docs/TRANSITION_CONTRACT.md">Transition contract ↗</a>
+<a href="https://github.com/gemquota/meatware-/blob/main/docs/PHASE_3.md">Phase 3 progress ↗</a>
+<a href="https://github.com/gemquota/meatware-/actions">Continuous integration ↗</a>
+</div>
+</section>
+</main>
+<footer><span>MEATWARE · An open experimental research project</span><span>Emergence is a hypothesis to test, not a feature to fake.</span></footer>
+</body>
+</html>
