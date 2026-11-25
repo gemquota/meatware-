@@ -188,7 +188,7 @@ mod tests {
         random: &mut RandomStream,
     ) -> Option<Proposal> {
         let id = match (&participants[0], &participants[1]) {
-            (Endpoint::Entity(a), Endpoint::Entity(b)) => 100 + a * 10 + b,
+            (Endpoint::Entity(a), Endpoint::Entity(b)) => 100 + *a * 10 + *b,
             _ => return None,
         };
         let mut properties = Properties::new();
