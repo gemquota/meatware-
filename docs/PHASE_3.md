@@ -30,11 +30,12 @@ Rust is selected as the primary reference runtime language. The C++/Rust candida
 ## Remaining Phase 3 work
 
 - [ ] Extend read dependencies to versioned predicates, relation endpoint sets and environmental state.
-- [ ] Persist random-stream derivation and generator identifiers in a versioned run manifest.
+- [x] Add a versioned run-manifest schema recording the actual PRNG, stream-consumption scheme, seed, model parameters, conflict policy, initial state hash and terminal/replay hashes.
+- [ ] Switch applicable dynamics to event-local streams and record their derivation scheme in the manifest.
 - [ ] Add property-based and fuzz testing.
 - [ ] Measure memory and runtime on mutation-heavy workloads.
 - [ ] Validate cross-platform numeric reproducibility limits.
-- [ ] Complete a headless experiment runner and manifest format.
+- [ ] Complete a headless experiment runner that emits the shared manifest format.
 - [ ] Define a stable snapshot migration policy beyond the first version.
 
 ## Event log and snapshot semantics
@@ -45,7 +46,7 @@ An event log stores the initial snapshot and an ordered sequence of transition r
 
 Appending is transactional: a candidate state is evaluated first, and neither the live configuration nor the log changes if the transition fails. The log also detects if a caller has mutated the live configuration outside the recorded transition path.
 
-The event log records computational transitions, not a complete philosophical or physical causal explanation. Proposals now carry source-state read predicates (existence and expected property values), checked before edits. Property-write conflicts can be rejected or resolved by lowest/highest stable proposal key; rejection remains the default. These decisions are replayed because the proposal batch is recorded. The current implementation does not yet persist a general resolver configuration in a run manifest, nor does it model versioned environmental reads or complete causal references.
+The event log records computational transitions, not a complete philosophical or physical causal explanation. Proposals now carry source-state read predicates (existence and expected property values), checked before edits. Property-write conflicts can be rejected or resolved by lowest/highest stable proposal key; rejection remains the default. These decisions are replayed because the proposal batch is recorded. The run-manifest schema records the selected conflict policy and actual random generator/stream scheme. Each event-log transition also records its conflict policy, so replay does not silently fall back to a different resolver. The browser MVP currently uses the default reject policy and a single sequential random stream; event-local stream derivation is available in the runtime but is not yet used by that model. Environmental reads and complete causal references remain future work.
 
 ## Deliberate limitations
 
@@ -55,6 +56,6 @@ State hashes use FNV-1a 64-bit for diagnostics and regression checks, not crypto
 
 ## Verification
 
-The latest repository CI is the authoritative verification record. It runs documentation validation, Python tests, native Rust tests and the headless runtime. The browser Pages workflow separately compiles the Rust WebAssembly target and deploys the site. No local Rust compilation is claimed where the tool environment does not provide Cargo.
+The versioned manifest schema and browser runtime export are documented in [RUN_MANIFEST.md](RUN_MANIFEST.md). The latest repository CI is the authoritative verification record. It runs documentation validation, Python tests, native Rust tests and the headless runtime. The browser Pages workflow separately compiles the Rust WebAssembly target and deploys the site. No local Rust compilation is claimed where the tool environment does not provide Cargo.
 
 No biological primitives, privileged reproduction operation or renderer dependency are present in the reference substrate.
