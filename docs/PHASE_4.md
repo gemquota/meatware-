@@ -13,6 +13,8 @@ A rule is identified by a stable numeric key and explicit version. Its evaluator
 - A stable, unordered participant combination.
 - An event-local deterministic random stream.
 
+An optional eligibility predicate also receives explicit serialisable rule parameters. This keeps selection thresholds visible and reproducible instead of hiding them in global state.
+
 It may return no proposal or one ordinary proposal containing read dependencies and generic edits. The scheduler assigns the proposal key and source boundary; evaluators cannot choose either. Proposals are sorted before they reach the transition engine.
 
 ## Implemented
@@ -21,8 +23,9 @@ It may return no proposal or one ordinary proposal containing read dependencies 
 - [x] Pairwise and arbitrary fixed-arity participant combinations.
 - [x] Explicit per-rule evaluation budgets.
 - [x] Optional deterministic eligibility predicates filter participant combinations before evaluation.
+- [x] Eligibility predicates receive explicit serialisable parameters; the browser relationship experiment uses the current interaction-range setting.
 - [x] Browser experiment forms persistent generic relations between eligible nearby entity pairs using the Rust scheduler and event log.
-- [x] Browser displays relation edges/count and exports/replays the resulting structural transitions.
+- [x] Browser displays relation edges/count, reports created/zero/error outcomes, and exports/replays the resulting structural transitions.
 - [x] Stable rule ordering and duplicate rule-key rejection.
 - [x] Rule key/version included in deterministic proposal identity.
 - [x] Serializable rule descriptors capture the scheduler parameters and version metadata; executable evaluator identity remains tied to the build.
