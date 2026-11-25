@@ -41,6 +41,8 @@ fn create_relation_proposal(
     let mut properties = Properties::new();
     properties.insert("distance_sq".into(), Value::Float(distance_sq));
     properties.insert("weight".into(), Value::Float(random.unit_f64()));
+    properties.insert("strength".into(), Value::Float(0.72));
+    properties.insert("age".into(), Value::Integer(0));
     Some(Proposal {
         key: 0,
         source_boundary: source.boundary,
@@ -159,7 +161,31 @@ impl World {
                 });
             }
 
-            self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
+            let mut all_proposals = proposals;
+            // Links strengthen under continued proximity and weaken under separation.
+            // Weak links retire through the ordinary, replayable transition contract.
+            let mut relation_updates = Vec::new();
+            for relation in self.state.relations.values() {
+                if relation.endpoints.len() != 2 { continue; }
+                let (a,b)=match (&relation.endpoints[0],&relation.endpoints[1]) { (Endpoint::Entity(a),Endpoint::Entity(b))=>(*a,*b), _=>continue };
+                let (Some(i),Some(j))=(ids.iter().position(|id|*id==a),ids.iter().position(|id|*id==b)) else {continue};
+                let mut dx=positions[j].0-positions[i].0; let mut dy=positions[j].1-positions[i].1;
+                if dx>0.5{dx-=1.0}else if dx< -0.5{dx+=1.0} if dy>0.5{dy-=1.0}else if dy< -0.5{dy+=1.0}
+                let d=(dx*dx+dy*dy).sqrt();
+                let rest=match relation.properties.get("distance_sq"){Some(Value::Float(v))=>v.max(0.0).sqrt(),_=>0.04};
+                let old=number(&relation.properties,"strength");
+                let next=if d<self.radius*0.8{old+0.0025}else{old-(0.001+(d-rest).max(0.0)*0.035)};
+                let mut edits=Vec::new();
+                if next<=0.08{edits.push(Edit::RetireRelation{id:relation.id});}
+                else{
+                    edits.push(Edit::SetRelationProperty{id:relation.id,key:"strength".into(),value:Value::Float(next.min(1.0))});
+                    let age=match relation.properties.get("age"){Some(Value::Integer(v))=>*v,_=>0};
+                    edits.push(Edit::SetRelationProperty{id:relation.id,key:"age".into(),value:Value::Integer(age.saturating_add(1))});
+                }
+                relation_updates.push(Proposal{key:10_000_000+relation.id,source_boundary:boundary,reads:Vec::new(),edits});
+            }
+            all_proposals.extend(relation_updates);
+            self.log.append_with_policy(&mut self.state, &all_proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
             self.used_event_local_streams = true;
         }
@@ -167,6 +193,24 @@ impl World {
     }
 
     pub fn relation_count(&self) -> usize { self.state.relations.len() }
+
+    /// [multi-entity components, largest component, mean relation strength, mean degree].
+    pub fn structural_metrics(&self) -> Vec<f64> {
+        let ids: Vec<u64> = self.state.entities.keys().copied().collect();
+        let mut parent: Vec<usize> = (0..ids.len()).collect();
+        fn root(parent: &mut [usize], mut i: usize) -> usize { while parent[i] != i { parent[i] = parent[parent[i]]; i = parent[i]; } i }
+        let mut degree=vec![0usize;ids.len()]; let mut strength=0.0; let mut edges=0usize;
+        for relation in self.state.relations.values() {
+            if relation.endpoints.len()!=2 {continue;}
+            let (a,b)=match (&relation.endpoints[0],&relation.endpoints[1]){(Endpoint::Entity(a),Endpoint::Entity(b))=>(*a,*b),_=>continue};
+            let (Some(i),Some(j))=(ids.iter().position(|x|*x==a),ids.iter().position(|x|*x==b))else{continue};
+            let ri=root(&mut parent,i);let rj=root(&mut parent,j);parent[ri]=rj;degree[i]+=1;degree[j]+=1;edges+=1;
+            strength+=number(&relation.properties,"strength");
+        }
+        let mut sizes=std::collections::BTreeMap::<usize,usize>::new();
+        for i in 0..ids.len(){let r=root(&mut parent,i);*sizes.entry(r).or_default()+=1;}
+        vec![sizes.values().filter(|&&s|s>1).count() as f64,sizes.values().copied().max().unwrap_or(0) as f64,if edges>0{strength/edges as f64}else{0.0},degree.iter().sum::<usize>() as f64/ids.len().max(1) as f64]
+    }
 
     /// Structural diagnostics derived from the generic relation graph:
     /// [connected components, largest component, mean degree, edge count].
@@ -265,6 +309,12 @@ impl World {
                     let py = dy * inv_d * force;
                     fx[i] += px; fy[i] += py;
                     fx[j] -= px; fy[j] -= py;
+                    // Local velocity alignment creates coherent collective motion.
+                    let align = proximity * self.coupling * self.motion * 0.018;
+                    fx[i] += (positions[j].4 - positions[i].4) * align;
+                    fy[i] += (positions[j].5 - positions[i].5) * align;
+                    fx[j] += (positions[i].4 - positions[j].4) * align;
+                    fy[j] += (positions[i].5 - positions[j].5) * align;
 
                     let exchange = proximity * self.coupling * 0.018;
                     da[i] += (positions[j].2 - positions[i].2) * exchange;
@@ -292,7 +342,7 @@ impl World {
                     Some(Value::Float(v)) => v.max(0.0).sqrt(),
                     _ => 0.04,
                 };
-                let strength = number(&relation.properties, "weight").clamp(0.0, 1.0);
+                let strength = number(&relation.properties, "strength").clamp(0.0, 1.0);
                 let tension = (d - rest).clamp(-0.15, 0.15) * 0.008 * strength * self.motion;
                 let px = dx / d * tension;
                 let py = dy / d * tension;
