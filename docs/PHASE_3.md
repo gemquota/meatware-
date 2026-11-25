@@ -29,7 +29,8 @@ Rust is selected as the primary reference runtime language. The C++/Rust candida
 
 ## Remaining Phase 3 work
 
-- [ ] Extend read dependencies to versioned predicates, relation endpoint sets and environmental state.
+- [x] Extend read dependencies to relation endpoint sets.
+- [ ] Extend read dependencies to versioned predicates and environmental state.
 - [x] Add a versioned run-manifest schema recording the actual PRNG, stream-consumption scheme, seed, model parameters, conflict policy, initial state hash and terminal/replay hashes.
 - [ ] Switch applicable dynamics to event-local streams and record their derivation scheme in the manifest.
 - [ ] Add property-based and fuzz testing.
