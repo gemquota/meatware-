@@ -244,6 +244,10 @@ fn validate_properties(p:&Properties)->Result<(),RuntimeError>{for(k,v)in p{vali
 #[derive(Clone,Debug)]
 pub struct RandomStream{state:u64}
 impl RandomStream{
+    /// Creates a stream whose identity is independent of evaluation order.
+    pub fn for_event(seed:u64,boundary:u64,proposal_key:u64,channel:&str)->Self{
+        Self::new(seed,event_stream_key(boundary,proposal_key,channel))
+    }
     pub fn new(seed:u64,stream_key:u64)->Self{
         let mut x=seed^stream_key.wrapping_mul(0x9e3779b97f4a7c15);
         x=(x^(x>>30)).wrapping_mul(0xbf58476d1ce4e5b9); x=(x^(x>>27)).wrapping_mul(0x94d049bb133111eb);
@@ -254,6 +258,17 @@ impl RandomStream{
         z=(z^(z>>30)).wrapping_mul(0xbf58476d1ce4e5b9); z=(z^(z>>27)).wrapping_mul(0x94d049bb133111eb); z^(z>>31)
     }
     pub fn unit_f64(&mut self)->f64{(self.next_u64()>>11)as f64*(1.0/((1u64<<53)as f64))}
+}
+
+/// Stable event-local stream key. Channel names are hashed with FNV-1a;
+/// tuple fields are mixed explicitly rather than through a platform hasher.
+pub fn event_stream_key(boundary:u64,proposal_key:u64,channel:&str)->u64{
+    let mut channel_hash=0xcbf29ce484222325u64;
+    for byte in channel.as_bytes(){channel_hash^=u64::from(*byte);channel_hash=channel_hash.wrapping_mul(0x100000001b3);}
+    let mut x=boundary^proposal_key.rotate_left(23)^channel_hash.rotate_left(41);
+    x=(x^(x>>30)).wrapping_mul(0xbf58476d1ce4e5b9);
+    x=(x^(x>>27)).wrapping_mul(0x94d049bb133111eb);
+    x^(x>>31)
 }
 
 #[cfg(test)]
@@ -273,6 +288,11 @@ mod tests{
  s.relations.insert(2,Relation{id:2,kind:"link".into(),endpoints:vec![Endpoint::Entity(1)],properties:Properties::new()});let before=s.state_hash().unwrap();
  assert!(matches!(s.apply_batch(&[p(1,vec![Edit::RetireEntity{id:1}])]),Err(RuntimeError::InvalidEndpoint(_))));assert_eq!(s.state_hash().unwrap(),before);}
  #[test]fn snapshot_round_trip(){let mut s=Configuration::default();s.entities.insert(7,Entity{id:7,properties:[("v".into(),Value::Float(1.25))].into_iter().collect()});let b=s.snapshot().unwrap();let t=Configuration::from_snapshot(&b).unwrap();assert_eq!(s.state_hash().unwrap(),t.state_hash().unwrap());}
+ #[test]fn event_streams_are_stable_and_order_independent(){
+ let mut a=RandomStream::for_event(77,12,9,"transform");let mut b=RandomStream::for_event(77,12,9,"transform");let mut c=RandomStream::for_event(77,12,10,"transform");
+ assert_eq!(a.next_u64(),b.next_u64());assert_ne!(a.next_u64(),c.next_u64());
+ assert_ne!(event_stream_key(12,9,"transform"),event_stream_key(12,9,"noise"));
+ }
  #[test]fn random_stream_is_reproducible(){let mut a=RandomStream::new(42,9);let mut b=RandomStream::new(42,9);assert_eq!((0..20).map(|_|a.next_u64()).collect::<Vec<_>>(),(0..20).map(|_|b.next_u64()).collect::<Vec<_>>());}
  #[test]fn read_dependency_rejects_stale_observation_atomically(){
  let mut s=Configuration::default();s.entities.insert(1,Entity{id:1,properties:[("x".into(),Value::Integer(1))].into_iter().collect()});let before=s.state_hash().unwrap();
