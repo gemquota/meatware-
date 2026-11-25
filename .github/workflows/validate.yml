@@ -20,6 +20,10 @@ jobs:
         run: python scripts/validate_docs.py
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
+      - name: Check browser module syntax
+        run: |
+          python -c 'import re; h=open("site/index.html").read(); s=re.findall(r"<script type=\"module\">(.*?)</script>", h, re.S); assert len(s)==1; open("/tmp/meatware-site.mjs", "w").write(s[0])'
+          node --check /tmp/meatware-site.mjs
       - name: Install stable Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Run Rust tests
