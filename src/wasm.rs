@@ -120,11 +120,7 @@ impl World {
     /// All candidate pairs are evaluated from one immutable source boundary.
     pub fn form_relations(&mut self, radius: f64) -> Result<u32, JsValue> {
         let rule = InteractionRule::entities(
-            0x4d45_4154,
-            1,
-            2,
-            125_000,
-            create_relation_proposal,
+            0x4d45_4154, 1, 2, 125_000, create_relation_proposal,
         ).with_eligibility(relation_eligible).with_parameters({
             let mut parameters = Properties::new();
             parameters.insert("radius".into(), Value::Float(radius.clamp(0.005, 0.25)));
@@ -134,31 +130,7 @@ impl World {
             .map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
         let count = proposals.len();
         if count > 0 {
-            let mut all_proposals = proposals;
-            // Links strengthen under continued proximity and weaken under separation.
-            // Weak links retire through the ordinary, replayable transition contract.
-            let mut relation_updates = Vec::new();
-            for relation in self.state.relations.values() {
-                if relation.endpoints.len() != 2 { continue; }
-                let (a,b)=match (&relation.endpoints[0],&relation.endpoints[1]) { (Endpoint::Entity(a),Endpoint::Entity(b))=>(*a,*b), _=>continue };
-                let (Some(i),Some(j))=(ids.iter().position(|id|*id==a),ids.iter().position(|id|*id==b)) else {continue};
-                let mut dx=positions[j].0-positions[i].0; let mut dy=positions[j].1-positions[i].1;
-                if dx>0.5{dx-=1.0}else if dx< -0.5{dx+=1.0} if dy>0.5{dy-=1.0}else if dy< -0.5{dy+=1.0}
-                let d=(dx*dx+dy*dy).sqrt();
-                let rest=match relation.properties.get("distance_sq"){Some(Value::Float(v))=>v.max(0.0).sqrt(),_=>0.04};
-                let old=number(&relation.properties,"strength");
-                let next=if d<self.radius*0.8{old+0.0025}else{old-(0.001+(d-rest).max(0.0)*0.035)};
-                let mut edits=Vec::new();
-                if next<=0.08{edits.push(Edit::RetireRelation{id:relation.id});}
-                else{
-                    edits.push(Edit::SetRelationProperty{id:relation.id,key:"strength".into(),value:Value::Float(next.min(1.0))});
-                    let age=match relation.properties.get("age"){Some(Value::Integer(v))=>*v,_=>0};
-                    edits.push(Edit::SetRelationProperty{id:relation.id,key:"age".into(),value:Value::Integer(age.saturating_add(1))});
-                }
-                relation_updates.push(Proposal{key:10_000_000+relation.id,source_boundary:boundary,reads:Vec::new(),edits});
-            }
-            all_proposals.extend(relation_updates);
-            self.log.append_with_policy(&mut self.state, &all_proposals, self.conflict_policy)
+            self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
             self.used_event_local_streams = true;
         }
@@ -221,6 +193,10 @@ impl World {
         let largest = sizes.values().copied().max().unwrap_or(0);
         let mean_degree = degree.iter().sum::<usize>() as f64 / ids.len().max(1) as f64;
         vec![components as f64, largest as f64, mean_degree, self.state.relations.len() as f64]
+    }
+
+    pub fn relation_strengths(&self) -> Vec<f64> {
+        self.state.relations.values().map(|r| match r.properties.get("strength") { Some(Value::Float(v)) => *v, _ => 0.72 }).collect()
     }
 
     /// Flattened endpoint coordinates for drawing relationship edges.
@@ -351,7 +327,34 @@ impl World {
                     ],
                 });
             }
-            self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
+            let mut all_proposals = proposals;
+            // Relationship strength responds to actual separation and proximity.
+            let mut relation_updates = Vec::new();
+            for relation in self.state.relations.values() {
+                if relation.endpoints.len() != 2 { continue; }
+                let (a,b)=match (&relation.endpoints[0],&relation.endpoints[1]) {
+                    (Endpoint::Entity(a),Endpoint::Entity(b))=>(*a,*b), _=>continue
+                };
+                let (Some(i),Some(j))=(ids.iter().position(|id|*id==a),ids.iter().position(|id|*id==b)) else {continue};
+                let mut dx=positions[j].0-positions[i].0;
+                let mut dy=positions[j].1-positions[i].1;
+                if dx>0.5{dx-=1.0}else if dx< -0.5{dx+=1.0}
+                if dy>0.5{dy-=1.0}else if dy< -0.5{dy+=1.0}
+                let distance=(dx*dx+dy*dy).sqrt();
+                let rest=match relation.properties.get("distance_sq"){Some(Value::Float(v))=>v.max(0.0).sqrt(),_=>0.04};
+                let old=match relation.properties.get("strength"){Some(Value::Float(v))=>*v,_=>0.72};
+                let next=if distance<self.radius*0.8{old+0.0025}else{old-(0.001+(distance-rest).max(0.0)*0.035)};
+                let mut edits=Vec::new();
+                if next<=0.08 { edits.push(Edit::RetireRelation{id:relation.id}); }
+                else {
+                    edits.push(Edit::SetRelationProperty{id:relation.id,key:"strength".into(),value:Value::Float(next.min(1.0))});
+                    let age=match relation.properties.get("age"){Some(Value::Integer(v))=>*v,_=>0};
+                    edits.push(Edit::SetRelationProperty{id:relation.id,key:"age".into(),value:Value::Integer(age.saturating_add(1))});
+                }
+                relation_updates.push(Proposal{key:10_000_000+relation.id,source_boundary:boundary,reads:Vec::new(),edits});
+            }
+            all_proposals.extend(relation_updates);
+            self.log.append_with_policy(&mut self.state, &all_proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
         }
         Ok(())
