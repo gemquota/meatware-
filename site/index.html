@@ -25,12 +25,12 @@
 </div>
 <aside class="panel controls">
 <h2>Experimental conditions</h2>
-<div class="group"><label for="count">Initial entities <output id="count-out">320</output></label><input id="count" type="range" min="40" max="900" step="20" value="320"></div>
+<div class="group"><label for="count">Initial entities <output id="count-out">320</output></label><input id="count" type="range" min="40" max="500" step="20" value="320"></div>
 <div class="group"><label for="seed">Random seed</label><input id="seed" type="number" min="0" max="4294967295" value="17"></div>
 <div class="group"><label for="coupling">Interaction strength <output id="coupling-out">0.80</output></label><input id="coupling" type="range" min="0" max="2" step=".05" value=".8"></div>
 <div class="group"><label for="noise">Stochastic perturbation <output id="noise-out">0.008</output></label><input id="noise" type="range" min="0" max=".05" step=".001" value=".008"></div>
 <div class="group"><label for="radius">Interaction range <output id="radius-out">0.055</output></label><input id="radius" type="range" min=".01" max=".2" step=".005" value=".055"></div>
-<div class="buttons"><button class="btn primary" id="run">Run</button><button class="btn" id="step">Step ×10</button><button class="btn" id="reset">Reset</button><button class="btn" id="replay">Replay 500</button></div>
+<div class="buttons"><button class="btn primary" id="run">Run</button><button class="btn" id="step">Step ×10</button><button class="btn" id="reset">Reset</button><button class="btn" id="replay">Replay 100</button></div>
 <button class="btn wide" id="export">Export run manifest</button>
 <div class="note">Deterministic for a fixed seed, configuration and execution path. Replay restarts the initial conditions and executes 500 transitions. The current model is an abstract dynamics demonstration, not evidence of evolution or adaptation.</div>
 </aside>
@@ -52,10 +52,10 @@ function applyControls(){if(!world)return;world.set_coupling(+$("coupling").valu
 function update(){if(!world)return;const m=world.metrics();$("m-count").textContent=world.count();$("m-tick").textContent=world.tick().toLocaleString();$("m-a").textContent=m[1].toFixed(3);$("m-b").textContent=m[2].toFixed(3);$("m-hash").textContent=world.state_hash().slice(0,8);$("count-out").textContent=$("count").value;$("coupling-out").textContent=(+$("coupling").value).toFixed(2);$("noise-out").textContent=(+$("noise").value).toFixed(3);$("radius-out").textContent=(+$("radius").value).toFixed(3)}
 function draw(){if(!world)return;const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);ctx.fillStyle="#08100e";ctx.fillRect(0,0,w,h);ctx.strokeStyle="rgba(166,227,183,.055)";ctx.lineWidth=1;for(let i=1;i<10;i++){ctx.beginPath();ctx.moveTo(w*i/10,0);ctx.lineTo(w*i/10,h);ctx.stroke();ctx.beginPath();ctx.moveTo(0,h*i/10);ctx.lineTo(w,h*i/10);ctx.stroke()}const pos=world.positions(),ch=world.channels();for(let i=0;i<pos.length;i+=2){const a=ch[i],b=ch[i+1],x=pos[i]*w,y=pos[i+1]*h;ctx.fillStyle=`rgb(${Math.round(85+150*a)},${Math.round(105+125*b)},${Math.round(105+65*(1-a))})`;ctx.globalAlpha=.45+.5*Math.max(a,b);ctx.beginPath();ctx.arc(x,y,1.2+2.2*(a+b)/2,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1}
 function stop(){running=false;cancelAnimationFrame(raf);$("run").textContent="Run";$("status").textContent="● PAUSED"}
-function loop(){if(!running)return;world.step(2);ticks+=2;frame++;if(frame%2===0){update();draw()}raf=requestAnimationFrame(loop)}
+function loop(){if(!running)return;world.step(1);ticks+=1;frame++;if(frame%2===0){update();draw()}raf=requestAnimationFrame(loop)}
 function start(){if(running){stop();return}running=true;$("run").textContent="Pause";$("status").textContent="● RUNNING";loop()}
 $("run").addEventListener("click",start);$("step").addEventListener("click",()=>{stop();world.step(10);ticks+=10;update();draw()});$("reset").addEventListener("click",()=>{stop();makeWorld()});
-$("replay").addEventListener("click",()=>{stop();makeWorld();world.step(500);ticks=500;update();draw();$("status").textContent="● REPLAY COMPLETE"});
+$("replay").addEventListener("click",()=>{stop();makeWorld();world.step(100);ticks=100;update();draw();$("status").textContent="● REPLAY COMPLETE"});
 $("export").addEventListener("click",()=>{const p=params(),manifest={format:"meatware-run-manifest",schema_version:1,runtime:"meatware-wasm-0.1.0",model:"two-channel-local-exchange",seed:p.seed,initial_entities:p.count,parameters:{coupling:p.coupling,noise:p.noise,interaction_radius:p.radius},transitions:world.tick(),state_hash:world.state_hash(),determinism:"same build, seed and execution path"};const blob=new Blob([JSON.stringify(manifest,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="meatware-run.json";a.click();URL.revokeObjectURL(url)});
 for(const id of ["coupling","noise","radius"]){$(id).addEventListener("input",()=>{applyControls();update()})}
 $("count").addEventListener("input",update);$("seed").addEventListener("change",update);
