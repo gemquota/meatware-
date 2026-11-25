@@ -220,6 +220,7 @@ impl World {
             out.push(number(&a.properties, "y"));
             out.push(number(&b.properties, "x"));
             out.push(number(&b.properties, "y"));
+            out.push(number(&relation.properties, "weight"));
         }
         out
     }
