@@ -1,5 +1,6 @@
 use crate::event_log::EventLog;
-use crate::{Configuration, Edit, Entity, Properties, Proposal, RandomStream, Value};
+use crate::run_manifest::RunManifest;
+use crate::{Configuration, ConflictPolicy, Edit, Entity, Properties, Proposal, RandomStream, Value};
 use wasm_bindgen::prelude::*;
 
 fn number(properties: &Properties, key: &str) -> f64 {
@@ -18,6 +19,10 @@ pub struct World {
     coupling: f64,
     noise: f64,
     radius: f64,
+    seed: u32,
+    initial_entities: usize,
+    initial_state_hash: String,
+    conflict_policy: ConflictPolicy,
 }
 
 #[wasm_bindgen]
@@ -35,10 +40,14 @@ impl World {
             state.entities.insert(id, Entity { id, properties });
         }
         state.next_id = state.entities.len() as u64 + 1;
+        let initial_hash = state.state_hash().map_err(|e| JsValue::from_str(&e.to_string()))?;
+        let initial_entities = state.entities.len();
         let log = EventLog::new(&state).map_err(|e| JsValue::from_str(&e.to_string()))?;
         Ok(World {
             state, log, random,
             coupling: 0.8, noise: 0.008, radius: 0.055,
+            seed, initial_entities, initial_state_hash: format!("{initial_hash:016x}"),
+            conflict_policy: ConflictPolicy::Reject,
         })
     }
 
@@ -91,7 +100,7 @@ impl World {
                     ],
                 });
             }
-            self.log.append(&mut self.state, &proposals)
+            self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
         }
         Ok(())
@@ -148,6 +157,35 @@ impl World {
 
     pub fn export_event_log(&self) -> Result<String, JsValue> {
         self.log.to_json().map_err(|e| JsValue::from_str(&e.to_string()))
+    }
+
+    pub fn export_manifest(&self, build_commit: &str) -> Result<String, JsValue> {
+        let terminal_state_hash = self.state_hash()?;
+        let replay_state_hash = self.replay_hash()?;
+        let mut parameters = Properties::new();
+        parameters.insert("coupling".into(), Value::Float(self.coupling));
+        parameters.insert("noise".into(), Value::Float(self.noise));
+        parameters.insert("interaction_radius".into(), Value::Float(self.radius));
+        let manifest = RunManifest {
+            format: "meatware-run-manifest".into(),
+            schema_version: 1,
+            runtime: "meatware-wasm-0.1.0".into(),
+            build_commit: build_commit.into(),
+            model: "two-channel-local-exchange-v1".into(),
+            random_generator: "splitmix64-v1".into(),
+            random_stream_scheme: "single-sequential-stream-v1".into(),
+            seed: self.seed as u64,
+            initial_entities: self.initial_entities,
+            parameters,
+            conflict_policy: self.conflict_policy,
+            initial_state_hash: self.initial_state_hash.clone(),
+            transitions: self.state.boundary,
+            event_records: self.log.records.len(),
+            terminal_state_hash,
+            replay_state_hash,
+            determinism: "event-log replay checked against terminal state".into(),
+        };
+        manifest.to_json().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     pub fn replay_hash(&self) -> Result<String, JsValue> {
