@@ -1,6 +1,6 @@
 # MVP 0.1 — Interactive abstract dynamics
 
-**Status:** Browser MVP implementation; deployment is gated on the WebAssembly build and Pages workflow.
+**Status:** Deployed to GitHub Pages. Native Rust CI and the WebAssembly Pages build have passed for the current implementation.
 
 ## Purpose
 
