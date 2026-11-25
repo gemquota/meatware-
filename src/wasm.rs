@@ -168,6 +168,44 @@ impl World {
 
     pub fn relation_count(&self) -> usize { self.state.relations.len() }
 
+    /// Structural diagnostics derived from the generic relation graph:
+    /// [connected components, largest component, mean degree, edge count].
+    pub fn structure_metrics(&self) -> Vec<f64> {
+        let ids: Vec<u64> = self.state.entities.keys().copied().collect();
+        let mut parent: Vec<usize> = (0..ids.len()).collect();
+        fn root(parent: &mut [usize], mut i: usize) -> usize {
+            while parent[i] != i {
+                let next = parent[i];
+                parent[i] = parent[next];
+                i = parent[i];
+            }
+            i
+        }
+        let index: std::collections::BTreeMap<u64, usize> =
+            ids.iter().enumerate().map(|(i, id)| (*id, i)).collect();
+        let mut degree = vec![0usize; ids.len()];
+        for relation in self.state.relations.values() {
+            if relation.endpoints.len() != 2 { continue; }
+            let (Endpoint::Entity(a), Endpoint::Entity(b)) =
+                (&relation.endpoints[0], &relation.endpoints[1]) else { continue; };
+            let (Some(&i), Some(&j)) = (index.get(a), index.get(b)) else { continue; };
+            degree[i] += 1;
+            degree[j] += 1;
+            let ri = root(&mut parent, i);
+            let rj = root(&mut parent, j);
+            if ri != rj { parent[rj] = ri; }
+        }
+        let mut sizes = std::collections::BTreeMap::<usize, usize>::new();
+        for i in 0..ids.len() {
+            let r = root(&mut parent, i);
+            *sizes.entry(r).or_default() += 1;
+        }
+        let components = sizes.len();
+        let largest = sizes.values().copied().max().unwrap_or(0);
+        let mean_degree = degree.iter().sum::<usize>() as f64 / ids.len().max(1) as f64;
+        vec![components as f64, largest as f64, mean_degree, self.state.relations.len() as f64]
+    }
+
     /// Flattened endpoint coordinates for drawing relationship edges.
     pub fn relation_edges(&self) -> Vec<f64> {
         let mut out = Vec::with_capacity(self.state.relations.len() * 4);
