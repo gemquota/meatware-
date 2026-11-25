@@ -63,7 +63,7 @@
    <button class="btn" id="export-log">Export event log</button><button class="btn" id="export">Export manifest</button>
   </div>
   <div class="buttons"><button class="btn" id="fullscreen">Enter fullscreen</button><button class="btn" id="hide-panel">Hide controls</button></div>
-  <div class="note">The world fills the viewport. Controls float above it and can be collapsed. Relationship formation checks every candidate pair at the current state, using the Interaction range value shown above. New links persist and are included in the replayable event log. If no links qualify, the result is reported here rather than disappearing into the void.</div>
+  <div class="note">The world fills the viewport. Controls float above it and can be collapsed. While paused, changing a live parameter now advances one transition so its effect is immediately observable. Use Step ×10 for deliberate manual advancement. Relationship formation checks every candidate pair at the current state, using the Interaction range value shown above. New links persist and are included in the replayable event log. If no links qualify, the result is reported here rather than disappearing into the void.</div>
  </div>
 </aside>
 <button id="toggle-panel" hidden>☷ Controls</button>
@@ -99,7 +99,7 @@ $("verify").addEventListener("click",()=>{try{const ok=world.state_hash()===worl
 function download(text,name){const blob=new Blob([text],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $("export-log").addEventListener("click",()=>{try{download(world.export_event_log(),"meatware-event-log.json");notify("Event log exported.")}catch(e){notify("Event log export failed: "+String(e),true)}});
 $("export").addEventListener("click",()=>{try{download(world.export_manifest(BUILD_SHA),"meatware-run-manifest.json");notify("Run manifest exported.")}catch(e){notify("Manifest export failed: "+String(e),true)}});
-for(const id of ["coupling","alignment","noise","radius","motion","damping"]){$(id).addEventListener("input",()=>{applyControls();update();draw(true)})}
+for(const id of ["coupling","alignment","noise","radius","motion","damping"]){$(id).addEventListener("input",()=>{applyControls();if(!running){try{world.step(1);$( "status").textContent="● PAUSED · 1 STEP APPLIED"}catch(e){log("Parameter response step failed: "+String(e),"error")}}update();draw(true)})}
 $("count").addEventListener("input",update);$("seed").addEventListener("change",update);
 function collapse(){const panel=$("panel");panel.classList.toggle("collapsed");$("collapse").textContent=panel.classList.contains("collapsed")?"+":"−"}
 $("collapse").addEventListener("click",collapse);
