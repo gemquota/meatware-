@@ -92,19 +92,19 @@ Phases are sequential gates, not calendar promises. Estimates are deferred until
 
 ## Phase 4 — General interaction and transformation system
 
+**Status: In progress.** The first deterministic scheduler now enumerates bounded participant combinations and emits ordinary proposals using rule-isolated random streams. Eligibility queries, spatial neighbourhoods, structural edit coverage and outcome traces remain open.
+
 **Goal:** Let novel configurations form through general rules rather than privileged biological operations.
 
 **Work**
-1. Define interaction eligibility and neighbourhood queries.
-2. Implement pairwise and multi-party interactions.
-3. Implement transformation proposals and conflict resolution.
-4. Support creation, removal, duplication, fusion, fragmentation and reconfiguration as generic transformations.
-5. Support relationship lifecycle.
-6. Support recursive structures and emergent boundaries.
-7. Add stochastic outcomes.
-8. Add rule configuration and versioning.
-9. Add interaction traces.
-10. Test formation of persistent configurations without seeding them.
+1. [x] Implement bounded pairwise and fixed-arity participant enumeration.
+2. [ ] Define interaction eligibility and indexed neighbourhood queries.
+3. [x] Implement read-only rule evaluation and proposal generation.
+4. [x] Isolate stochastic streams by rule and participant combination.
+5. [ ] Extend generic structural transformations and relationship reconfiguration.
+6. [ ] Add portable rule descriptors and versioned configuration records.
+7. [ ] Add interaction and proposal outcome traces.
+8. [ ] Build controlled composition experiments without seeded structures.
 
 **Deliverables:** rule/interaction engine, transformation pipeline, relationship lifecycle, stochastic processes, event traces and composition experiments.
 
