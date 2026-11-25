@@ -16,8 +16,8 @@ Rust is selected as the primary reference runtime language. The C++/Rust candida
 - [x] Extensible typed property values and first-class state-bearing relations.
 - [x] Recursive relation-to-relation endpoints.
 - [x] Proposal-based atomic transition batches.
-- [x] Stable proposal ordering and rejection of conflicting writes.
-- [x] Explicit SplitMix64 random streams.
+- [x] Stable proposal ordering, source-boundary read dependencies and explicit conflict policies (reject by default; lowest/highest proposal key wins when selected).
+- [x] Explicit SplitMix64 random streams with stable event-local key derivation from boundary, proposal key and channel.
 - [x] Canonical ordered-state encoding and diagnostic state hashes.
 - [x] Versioned snapshot envelopes with legacy unwrapped-snapshot loading.
 - [x] Append-only transition event log with source/target boundary and hash verification.
@@ -29,8 +29,8 @@ Rust is selected as the primary reference runtime language. The C++/Rust candida
 
 ## Remaining Phase 3 work
 
-- [ ] Add read-version dependencies and configurable conflict resolvers.
-- [ ] Define stable event-local random-stream key derivation in a run manifest.
+- [ ] Extend read dependencies to versioned predicates, relation endpoint sets and environmental state.
+- [ ] Persist random-stream derivation and generator identifiers in a versioned run manifest.
 - [ ] Add property-based and fuzz testing.
 - [ ] Measure memory and runtime on mutation-heavy workloads.
 - [ ] Validate cross-platform numeric reproducibility limits.
@@ -45,11 +45,11 @@ An event log stores the initial snapshot and an ordered sequence of transition r
 
 Appending is transactional: a candidate state is evaluated first, and neither the live configuration nor the log changes if the transition fails. The log also detects if a caller has mutated the live configuration outside the recorded transition path.
 
-The event log records computational transitions, not a complete philosophical or physical causal explanation. Rule identifiers, read dependencies, environmental event records and event-local random streams remain future work.
+The event log records computational transitions, not a complete philosophical or physical causal explanation. Proposals now carry source-state read predicates (existence and expected property values), checked before edits. Property-write conflicts can be rejected or resolved by lowest/highest stable proposal key; rejection remains the default. These decisions are replayed because the proposal batch is recorded. The current implementation does not yet persist a general resolver configuration in a run manifest, nor does it model versioned environmental reads or complete causal references.
 
 ## Deliberate limitations
 
-The first runtime uses ordered maps for deterministic iteration and canonical state. This is a correctness baseline, not a performance claim. The initial resolver rejects conflicting writes rather than silently choosing a winner. Entity retirement is rejected if it leaves an active relation with a dangling endpoint.
+The first runtime uses ordered maps for deterministic iteration and canonical state. This is a correctness baseline, not a performance claim. The default resolver rejects conflicting property writes. Explicit alternatives select the lowest or highest stable proposal key; these are deterministic baseline policies, not universal scientific defaults. Read dependencies currently cover entity/relation existence and expected property values, not arbitrary predicates or version counters. Entity retirement is rejected if it leaves an active relation with a dangling endpoint.
 
 State hashes use FNV-1a 64-bit for diagnostics and regression checks, not cryptographic integrity. Versioned JSON snapshots do not yet promise cross-version or cross-platform bitwise equivalence. Deterministic replay is guaranteed only to the extent that the same runtime semantics, numeric behaviour and recorded proposal inputs are preserved. The runtime does not yet implement the complete proposal dependency and causal-event model from the Phase 2 contract.
 
