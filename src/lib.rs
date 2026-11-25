@@ -1,5 +1,6 @@
 //! Language-neutral substrate semantics, implemented as a deterministic Rust reference runtime.
 pub mod event_log;
+pub mod interactions;
 pub mod run_manifest;
 
 #[cfg(target_arch = "wasm32")]
