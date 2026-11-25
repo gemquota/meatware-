@@ -36,6 +36,16 @@
 7. Invalid transitions fail without partially mutating source state.
 8. Headless execution requires no renderer or UI.
 
+## Initial CI result
+
+- CI run: [C++/Rust candidate parity](https://github.com/gemquota/meatware-/actions/runs/45528364851).
+- Runner: GitHub-hosted Ubuntu 26.04.
+- Workload: 200,000 entities, 1,200,000 relations, eight update steps.
+- C++: 41.311 ms; Rust: 38.328 ms in this single smoke run.
+- Both checksums matched within the declared tolerance.
+
+This is one shared-runner observation, not a performance ranking. No language has been selected.
+
 ## Current decision
 
 The logical model is graph-oriented; physical storage and language remain open. The benchmark is deliberately narrow and cannot justify a decision by itself.
