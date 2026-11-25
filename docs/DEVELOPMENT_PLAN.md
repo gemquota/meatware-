@@ -101,10 +101,11 @@ Phases are sequential gates, not calendar promises. Estimates are deferred until
 2. [ ] Define interaction eligibility and indexed neighbourhood queries.
 3. [x] Implement read-only rule evaluation and proposal generation.
 4. [x] Isolate stochastic streams by rule and participant combination.
-5. [ ] Extend generic structural transformations and relationship reconfiguration.
-6. [ ] Add portable rule descriptors and versioned configuration records.
-7. [ ] Add interaction and proposal outcome traces.
-8. [ ] Build controlled composition experiments without seeded structures.
+5. [x] Add atomic relationship endpoint reconfiguration and endpoint-set read dependencies.
+6. [ ] Extend generic structural transformations with duplication/fusion/fragmentation compositions.
+7. [ ] Add portable rule descriptors and versioned configuration records.
+8. [ ] Add interaction and proposal outcome traces.
+9. [ ] Build controlled composition experiments without seeded structures.
 
 **Deliverables:** rule/interaction engine, transformation pipeline, relationship lifecycle, stochastic processes, event traces and composition experiments.
 
