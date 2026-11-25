@@ -78,6 +78,7 @@ pub struct World {
     initial_entities: usize,
     initial_state_hash: String,
     conflict_policy: ConflictPolicy,
+    used_event_local_streams: bool,
 }
 
 #[wasm_bindgen]
@@ -103,6 +104,7 @@ impl World {
             coupling: 0.8, noise: 0.008, radius: 0.055,
             seed, initial_entities, initial_state_hash: format!("{initial_hash:016x}"),
             conflict_policy: ConflictPolicy::Reject,
+            used_event_local_streams: false,
         })
     }
 
@@ -122,6 +124,7 @@ impl World {
         if count > 0 {
             self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
+            self.used_event_local_streams = true;
         }
         Ok(count as u32)
     }
@@ -268,7 +271,7 @@ impl World {
             build_commit: build_commit.into(),
             model: "two-channel-local-exchange-v1".into(),
             random_generator: "splitmix64-v1".into(),
-            random_stream_scheme: "single-sequential-stream-v1".into(),
+            random_stream_scheme: if self.used_event_local_streams { "sequential-plus-event-local-v1".into() } else { "single-sequential-stream-v1".into() },
             seed: self.seed as u64,
             initial_entities: self.initial_entities,
             parameters,
