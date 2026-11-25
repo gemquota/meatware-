@@ -35,7 +35,7 @@ impl From<RuntimeError> for InteractionError {
 /// `max_evaluations` is an explicit computational budget. Candidates are drawn
 /// from the selected domain in stable identity order. Each combination is evaluated
 /// at most once per rule and source boundary.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct InteractionRuleDescriptor {
     pub key: u64,
     pub version: u32,
@@ -48,7 +48,7 @@ pub struct InteractionRuleDescriptor {
     pub parameters: crate::Properties,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct InteractionRule {
     pub key: u64,
     pub version: u32,
@@ -106,7 +106,7 @@ impl InteractionRule {
         max_evaluations: usize,
         evaluate: RuleEvaluator,
     ) -> Self {
-        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: true, eligible: None, evaluate }
+        Self { key, version, arity, max_evaluations, include_entities: true, include_relations: true, eligible: None, parameters: crate::Properties::new(), evaluate }
     }
 }
 
