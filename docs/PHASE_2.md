@@ -56,4 +56,9 @@ The contract is sufficiently precise to implement a reference runtime without in
 
 ## Completion record
 
-Pending repository CI verification.
+- Contract commit: `3ebe4225a815211fe05c6297ad7e3085f01bf612`.
+- Follow-up conformance correction: `d0691fbd6a7f52cb6d9a231d071ff7e98fc15a17`.
+- CI: [Phase 2 documentation and contract validation](https://github.com/gemquota/meatware-/actions/runs/45527532690).
+- Result: documentation validation and all unit tests passed.
+- Transition fixture: 12 machine-readable conformance scenarios committed for Phase 3 runtime tests.
+- Language, runtime, physical storage and numeric formats remain deferred.
