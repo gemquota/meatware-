@@ -170,6 +170,7 @@ mod tests {
         Proposal {
             key,
             source_boundary: boundary,
+            reads: Vec::new(),
             edits: vec![Edit::SetEntityProperty {
                 id: 1,
                 key: "signal".into(),
