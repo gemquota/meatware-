@@ -223,6 +223,8 @@ impl World {
     pub fn step(&mut self, steps: u32) -> Result<(), JsValue> {
         for _ in 0..steps.min(1000) {
             let ids: Vec<u64> = self.state.entities.keys().copied().collect();
+            let index_by_id: std::collections::BTreeMap<u64, usize> =
+                ids.iter().enumerate().map(|(i, id)| (*id, i)).collect();
             let n = ids.len();
             let mut da = vec![0.0; n];
             let mut db = vec![0.0; n];
@@ -335,7 +337,7 @@ impl World {
                 let (a,b)=match (&relation.endpoints[0],&relation.endpoints[1]) {
                     (Endpoint::Entity(a),Endpoint::Entity(b))=>(*a,*b), _=>continue
                 };
-                let (Some(i),Some(j))=(ids.iter().position(|id|*id==a),ids.iter().position(|id|*id==b)) else {continue};
+                let (Some(&i),Some(&j))=(index_by_id.get(&a),index_by_id.get(&b)) else {continue};
                 let mut dx=positions[j].0-positions[i].0;
                 let mut dy=positions[j].1-positions[i].1;
                 if dx>0.5{dx-=1.0}else if dx< -0.5{dx+=1.0}
