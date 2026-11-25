@@ -95,9 +95,6 @@ impl Configuration {
             validate_properties(&relation.properties)?;
             for endpoint in &relation.endpoints { self.validate_endpoint(endpoint)?; }
         }
-        if self.entities.keys().chain(self.relations.keys()).chain(self.retired.iter()).any(|id| *id >= self.next_id) {
-            return Err(RuntimeError::InvalidSnapshot("next_id must exceed every active and retired identifier".into()));
-        }
         Ok(())
     }
     fn validate_endpoint(&self, endpoint: &Endpoint) -> Result<(), RuntimeError> {
