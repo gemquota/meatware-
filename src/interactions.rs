@@ -5,7 +5,7 @@
 //! it does not interpret the meaning of any emitted edit.
 
 use crate::{
-    Configuration, Edit, Endpoint, Proposal, RandomStream, RuntimeError,
+    Configuration, Endpoint, Proposal, RandomStream, RuntimeError,
 };
 use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
@@ -294,7 +294,7 @@ mod tests {
         let state = source();
         let before = state.state_hash().unwrap();
         let rule = InteractionRule::entities(7, 1, 2, 10, emit_relation);
-        let first = evaluate_interactions(&state, 42, &[rule]).unwrap();
+        let first = evaluate_interactions(&state, 42, &[rule.clone()]).unwrap();
         let second = evaluate_interactions(&state, 42, &[rule]).unwrap();
         assert_eq!(first, second);
         assert_eq!(state.state_hash().unwrap(), before);
@@ -308,7 +308,7 @@ mod tests {
         let state = source();
         let rule = InteractionRule::entities(7, 1, 2, 10, emit_relation)
             .with_eligibility(exclude_first_pair);
-        let proposals = evaluate_interactions(&state, 42, &[rule]).unwrap();
+        let proposals = evaluate_interactions(&state, 42, &[rule.clone()]).unwrap();
         assert_eq!(proposals.len(), 2);
         assert!(rule.descriptor().has_eligibility);
     }
@@ -324,7 +324,7 @@ mod tests {
         let rule = InteractionRule::entities(11, 1, 2, 10, emit_relation)
             .with_eligibility(only_with_enabled_parameter)
             .with_parameters(parameters);
-        let proposals = evaluate_interactions(&state, 42, &[rule]).unwrap();
+        let proposals = evaluate_interactions(&state, 42, &[rule.clone()]).unwrap();
         assert_eq!(proposals.len(), 3);
         assert_eq!(rule.descriptor().parameters.get("enabled"), Some(&Value::Bool(true)));
     }
