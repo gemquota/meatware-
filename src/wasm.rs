@@ -456,3 +456,97 @@ impl World {
         Ok(format!("{hash:016x}"))
     }
 }
+
+
+#[cfg(test)]
+mod dynamics_tests {
+    use super::*;
+
+    fn world(seed: u32) -> World {
+        World::new(160, seed).expect("world construction")
+    }
+
+    fn mean_speed(world: &World) -> f64 {
+        let velocities = world.velocities();
+        let mut total = 0.0;
+        for pair in velocities.chunks_exact(2) {
+            total += (pair[0] * pair[0] + pair[1] * pair[1]).sqrt();
+        }
+        total / (velocities.len() / 2).max(1) as f64
+    }
+
+    fn position_distance(a: &World, b: &World) -> f64 {
+        let pa = a.positions();
+        let pb = b.positions();
+        pa.iter().zip(pb.iter()).map(|(x, y)| (x - y).abs()).sum()
+    }
+
+    #[test]
+    fn motion_strength_changes_measured_speed_and_trajectory() {
+        let mut slow = world(71);
+        let mut fast = world(71);
+        for w in [&mut slow, &mut fast] {
+            w.set_noise(0.0);
+            w.set_coupling(1.2);
+            w.set_alignment(0.0);
+        }
+        slow.set_motion(0.1);
+        fast.set_motion(3.0);
+        slow.step(120).unwrap();
+        fast.step(120).unwrap();
+        assert!(mean_speed(&fast) > mean_speed(&slow) + 1e-5,
+            "fast={}, slow={}", mean_speed(&fast), mean_speed(&slow));
+        assert!(position_distance(&fast, &slow) > 1e-3,
+            "motion extremes produced indistinguishable positions");
+    }
+
+    #[test]
+    fn noise_changes_velocity_statistics_and_replay_remains_deterministic() {
+        let mut quiet = world(91);
+        let mut noisy = world(91);
+        quiet.set_noise(0.0);
+        noisy.set_noise(0.1);
+        quiet.step(80).unwrap();
+        noisy.step(80).unwrap();
+        assert!(mean_speed(&noisy) > mean_speed(&quiet) + 1e-5,
+            "noise did not measurably increase movement");
+        let mut replay = world(91);
+        replay.set_noise(0.1);
+        replay.step(80).unwrap();
+        assert_eq!(noisy.state_hash().unwrap(), replay.state_hash().unwrap());
+    }
+
+    #[test]
+    fn interaction_radius_changes_trajectory() {
+        let mut narrow = world(123);
+        let mut broad = world(123);
+        for w in [&mut narrow, &mut broad] {
+            w.set_noise(0.0);
+            w.set_coupling(2.0);
+            w.set_alignment(0.0);
+        }
+        narrow.set_radius(0.015);
+        broad.set_radius(0.25);
+        narrow.step(100).unwrap();
+        broad.step(100).unwrap();
+        assert!(position_distance(&narrow, &broad) > 1e-3,
+            "interaction radius did not measurably affect the trajectory");
+    }
+
+    #[test]
+    fn alignment_changes_trajectory_when_motion_is_present() {
+        let mut unaligned = world(456);
+        let mut aligned = world(456);
+        for w in [&mut unaligned, &mut aligned] {
+            w.set_noise(0.08);
+            w.set_motion(2.0);
+            w.set_coupling(0.0);
+        }
+        unaligned.set_alignment(0.0);
+        aligned.set_alignment(3.0);
+        unaligned.step(100).unwrap();
+        aligned.step(100).unwrap();
+        assert!(position_distance(&unaligned, &aligned) > 1e-3,
+            "alignment did not measurably affect the trajectory");
+    }
+}
