@@ -132,8 +132,14 @@ impl World {
             parameters.insert("radius".into(), Value::Float(radius.clamp(0.005, 0.25)));
             parameters
         });
-        let proposals = evaluate_interactions(&self.state, self.seed as u64, &[rule])
+        // Relationships are deliberately bounded. Dense all-to-all graphs make
+        // both the physical update and browser rendering needlessly expensive.
+        const MAX_RELATIONS: usize = 500;
+        let remaining = MAX_RELATIONS.saturating_sub(self.state.relations.len());
+        if remaining == 0 { return Ok(0); }
+        let mut proposals = evaluate_interactions(&self.state, self.seed as u64, &[rule])
             .map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
+        proposals.truncate(remaining);
         let count = proposals.len();
         if count > 0 {
             self.log.append_with_policy(&mut self.state, &proposals, self.conflict_policy)
@@ -191,9 +197,13 @@ impl World {
 
     /// Flattened endpoint coordinates for drawing relationship edges.
     pub fn relation_edges(&self) -> Vec<f64> {
-        let mut out = Vec::with_capacity(self.state.relations.len() * 4);
-        for relation in self.state.relations.values() {
-            if relation.endpoints.len() != 2 { continue; }
+        // Keep the visual overlay legible and cheap even at the relationship cap.
+        const MAX_DRAWN_RELATIONS: usize = 220;
+        let total = self.state.relations.len();
+        let stride = (total + MAX_DRAWN_RELATIONS - 1) / MAX_DRAWN_RELATIONS;
+        let mut out = Vec::with_capacity(total.min(MAX_DRAWN_RELATIONS) * 5);
+        for (index, relation) in self.state.relations.values().enumerate() {
+            if index % stride.max(1) != 0 || relation.endpoints.len() != 2 { continue; }
             let ids = match (&relation.endpoints[0], &relation.endpoints[1]) {
                 (Endpoint::Entity(a), Endpoint::Entity(b)) => (*a, *b),
                 _ => continue,
