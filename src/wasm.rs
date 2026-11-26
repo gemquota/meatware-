@@ -99,8 +99,13 @@ impl World {
             properties.insert("y".into(), Value::Float(random.unit_f64()));
             properties.insert("a".into(), Value::Float(random.unit_f64()));
             properties.insert("b".into(), Value::Float(random.unit_f64()));
-            properties.insert("vx".into(), Value::Float(0.0));
-            properties.insert("vy".into(), Value::Float(0.0));
+            // Start with a small, isotropic velocity distribution so the world has
+            // visible motion from its first transition rather than waiting for
+            // stochastic perturbations to break a perfectly stationary state.
+            let angle = random.unit_f64() * std::f64::consts::TAU;
+            let speed = 0.0015 + random.unit_f64() * 0.0025;
+            properties.insert("vx".into(), Value::Float(angle.cos() * speed));
+            properties.insert("vy".into(), Value::Float(angle.sin() * speed));
             state.entities.insert(id, Entity { id, properties });
         }
         state.next_id = state.entities.len() as u64 + 1;
